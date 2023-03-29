@@ -20,6 +20,12 @@ export const CreateTaskForm = (props: CreateTaskProps) => {
             <Form.TextField id="task" title="Task" />
             <Form.TextField id="manhours" title="Man hours" />
             <Form.TextField id="module" title="Module" />
+            <Form.Dropdown id="project" title="Project">
+                <Form.Dropdown.Item value="108" title="[APPMAN] MAC" />
+                <Form.Dropdown.Item value="132" title="MAC-KTAXA" />
+                <Form.Dropdown.Item value="51" title="[KTAXA] Advisor Zone" />
+                <Form.Dropdown.Item value="47" title="Leave" />
+            </Form.Dropdown>
             <Form.TextField id="subTaskInput" title="Sub task" />
             <Form.TextField id="remark" title="Remark" />
             <Form.TextField id="crNo" title="Cr No" />

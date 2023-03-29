@@ -9,7 +9,7 @@ import { ExportFileAction } from "./components/ExportFileAction";
 import { Task } from "./type/Task";
 
 type State = {
-  tasks: Array<Task>,
+  tasks: Task[],
   isLoading: boolean,
 }
 export type PreferencesType = {
@@ -26,10 +26,18 @@ export function getSaveDirectory(): string {
 export default function Command() {
   const { pop } = useNavigation();
 
+
+
   const [state, setState] = useState<State>({
     tasks: [],
     isLoading: true,
   })
+  const [groupedTasks, setGroupedTask] = useState<{ date: string, tasks: Task[], totalManhours: number }[]>([])
+
+
+
+
+
   useEffect(() => {
     (async () => {
       const storedTasks = await LocalStorage.getItem<string>("tasks");
@@ -48,11 +56,32 @@ export default function Command() {
     })();
   }, []);
   useEffect(() => {
-    setState({ ...state, isLoading: true })
     LocalStorage.setItem("tasks", JSON.stringify(state.tasks));
-    setState({ ...state, isLoading: false })
-
   }, [state.tasks]);
+
+  useEffect(() => {
+    const { tasks } = state;
+    if (tasks.length > 0) {
+      const groupedTasks = tasks.reduce((acc: { date: string, tasks: Task[], totalManhours: number }[], task) => {
+        const date = task.date;
+        const index = acc.findIndex(group => group.date === date);
+        if (index === -1) {
+          acc.push({
+            date,
+            tasks: [task],
+            totalManhours: task.manhours
+          });
+        } else {
+          acc[index].tasks.push(task);
+          acc[index].totalManhours += task.manhours;
+        }
+        return acc;
+      }, []);
+
+      setGroupedTask(groupedTasks)
+    }
+
+  }, [state.tasks])
 
   const handleDelete = useCallback(
     (index: number) => {
@@ -64,17 +93,23 @@ export default function Command() {
   );
 
 
-  const handleCreate = useCallback((task: Task) => {
-    console.log(task)
-    setState({ ...state, tasks: [...state.tasks, task] })
-    pop()
-  }, [])
-  const handleEdit = useCallback((index: number, values: Task) => {
+  const handleCreate = useCallback(
+    (task: Task) => {
+      const newTask = [...state.tasks, { ...task, id: state.tasks.length + 1 }];
+      setState((previous) => ({ ...previous, tasks: newTask }));
+      pop()
+    },
+    [state.tasks, setState]
+  );
+
+  const handleEdit = useCallback((values: Task) => {
     const newTasks = [...state.tasks];
-    newTasks[index] = values;
+    const index = newTasks.findIndex((task) => task.id === values.id);
+    console.log(values)
+    newTasks[index] = { ...values }
     setState((previous) => ({ ...previous, tasks: newTasks }));
     pop()
-  }, [])
+  }, [state.tasks, setState])
 
   const handleExport = useCallback(() => {
     const json = JSON.stringify(state.tasks);
@@ -90,25 +125,33 @@ export default function Command() {
     >
       <EmptyView onCreate={handleCreate} tasks={state.tasks} />
       {
-        state.tasks.map((task, index) => (
-          <List.Item
-            key={index}
-            icon={Icon.Checkmark}
-            title={task.task}
-            actions={
-              <ActionPanel>
-                <ActionPanel.Section>
-                  <EditTaskAction onEdit={handleEdit} task={task} index={index} />
-                </ActionPanel.Section>
-                <ActionPanel.Section>
-                  <CreateTaskAction onCreate={handleCreate} />
-                  <DeleteTaskAction onDelete={() => handleDelete(index)} />
-                  <ExportFileAction onExport={handleExport} />
-                </ActionPanel.Section>
-              </ActionPanel>
+        groupedTasks.map((group, groupIndex) => (
+          <List.Section
+            key={groupIndex}
+            title={group.date}
+            subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? '' : 's'}  total hours: ${group.totalManhours}`}>
+            {
+              group.tasks.map((task, taskIndex) => (
+                <List.Item
+                  key={taskIndex}
+                  title={task.task}
+                  actions={
+                    <ActionPanel>
+                      <ActionPanel.Section>
+                        <EditTaskAction onEdit={handleEdit} task={task} />
+                      </ActionPanel.Section>
+                      <ActionPanel.Section>
+                        <CreateTaskAction onCreate={handleCreate} />
+                        <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
+                        <ExportFileAction onExport={handleExport} />
+                      </ActionPanel.Section>
+                    </ActionPanel>
+                  }
+                  subtitle={`Hours: ${task.manhours}`}
+                />
+              ))
             }
-            subtitle={`${task.date}`}
-          />
+          </List.Section>
         ))
       }
 
