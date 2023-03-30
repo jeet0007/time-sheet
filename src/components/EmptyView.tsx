@@ -1,14 +1,17 @@
-import { Action, ActionPanel, List } from "@raycast/api"
+import { ActionPanel, List } from "@raycast/api"
 import React from "react"
 import { Task } from "../type/Task"
 import { CreateTaskAction } from "./CreateTaskAction"
+import { ImportTasksAction } from "./ImportTasksAction"
+
 
 export interface EmptyViewProps {
     tasks: Task[]
     onCreate: (task: Task) => void
+    onImport: () => void
 }
 
-export const EmptyView = ({ onCreate }: EmptyViewProps) => {
+export const EmptyView = ({ onCreate, onImport }: EmptyViewProps) => {
     return (
         <List.EmptyView
             icon={"💀"}
@@ -17,6 +20,7 @@ export const EmptyView = ({ onCreate }: EmptyViewProps) => {
             actions={
                 <ActionPanel>
                     <CreateTaskAction onCreate={onCreate} />
+                    <ImportTasksAction onImport={onImport} />
                 </ActionPanel>
             }
         />

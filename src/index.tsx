@@ -1,4 +1,4 @@
-import { ActionPanel, List, Icon, LocalStorage, getPreferenceValues, useNavigation } from "@raycast/api";
+import { ActionPanel, List, LocalStorage, getPreferenceValues, useNavigation } from "@raycast/api";
 import { writeFileSync } from "fs";
 import moment from "moment";
 import { homedir } from "node:os";
@@ -7,14 +7,14 @@ import { useCallback, useEffect, useState } from "react";
 import { CreateTaskAction, DeleteTaskAction, EditTaskAction, EmptyView } from "./components";
 import { ExportFileAction } from "./components/ExportFileAction";
 import { Task } from "./type/Task";
+import { ImportTasksAction } from "./components/ImportTasksAction";
+import * as google from './service/google'
 
-type State = {
+export type State = {
   tasks: Task[],
   isLoading: boolean,
 }
-export type PreferencesType = {
-  saveDirectory: string;
-};
+
 
 export function getSaveDirectory(): string {
   let { saveDirectory } = getPreferenceValues();
@@ -33,9 +33,6 @@ export default function Command() {
     isLoading: true,
   })
   const [groupedTasks, setGroupedTask] = useState<{ date: string, tasks: Task[], totalManhours: number }[]>([])
-
-
-
 
 
   useEffect(() => {
@@ -61,7 +58,6 @@ export default function Command() {
 
   useEffect(() => {
     const { tasks } = state;
-    if (tasks.length > 0) {
       const groupedTasks = tasks.reduce((acc: { date: string, tasks: Task[], totalManhours: number }[], task) => {
         const date = task.date;
         const index = acc.findIndex(group => group.date === date);
@@ -69,28 +65,41 @@ export default function Command() {
           acc.push({
             date,
             tasks: [task],
-            totalManhours: task.manhours
+            totalManhours: (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours
           });
         } else {
           acc[index].tasks.push(task);
-          acc[index].totalManhours += task.manhours;
+          acc[index].totalManhours += (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours;
         }
         return acc;
       }, []);
-
-      setGroupedTask(groupedTasks)
-    }
+    setGroupedTask(groupedTasks)
 
   }, [state.tasks])
 
-  const handleDelete = useCallback(
-    (index: number) => {
-      const newTasks = [...state.tasks];
-      newTasks.splice(index, 1);
-      setState((previous) => ({ ...previous, tasks: newTasks }));
-    },
-    [state.tasks, setState]
-  );
+  const handleDelete = useCallback((id: number) => {
+    setState((previous) => {
+      const newTasks = previous.tasks.filter((task) => task.id !== id);
+      return { ...previous, tasks: newTasks };
+    });
+  }, [setState]);
+
+  const handleImportFromGoogle = useCallback(async () => {
+    try {
+      console.log('Importing')
+      await google.authorize()
+      const events = await google.fetchEvents()
+      let length = state.tasks.length
+      const newTasks = events.map(task => {
+        const taskWithId = { ...task, id: length + 1 }
+        length += 1;
+        return taskWithId
+      })
+      setState((previous) => ({ ...previous, tasks: [...state.tasks, ...newTasks] }));
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
 
 
   const handleCreate = useCallback(
@@ -123,7 +132,7 @@ export default function Command() {
     <List
       isLoading={state.isLoading}
     >
-      <EmptyView onCreate={handleCreate} tasks={state.tasks} />
+      <EmptyView onCreate={handleCreate} tasks={state.tasks} onImport={handleImportFromGoogle} />
       {
         groupedTasks.map((group, groupIndex) => (
           <List.Section
@@ -144,6 +153,7 @@ export default function Command() {
                         <CreateTaskAction onCreate={handleCreate} />
                         <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
                         <ExportFileAction onExport={handleExport} />
+                        <ImportTasksAction onImport={handleImportFromGoogle} />
                       </ActionPanel.Section>
                     </ActionPanel>
                   }

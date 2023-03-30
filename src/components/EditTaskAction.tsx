@@ -5,7 +5,7 @@ import { EditTaskForm } from "./EditTaskForm";
 export const EditTaskAction = (props: { onEdit: (task: Task) => void, task: Task }) => {
     return (
         <Action.Push
-            icon={Icon.Trash}
+            icon={Icon.EditShape}
             title="Edit Task"
             target={<EditTaskForm onEdit={props.onEdit} task={props.task} />}
         />

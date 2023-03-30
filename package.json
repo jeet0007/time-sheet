@@ -25,13 +25,37 @@
       "required": true,
       "title": "Save Exports Directory",
       "description": "All Exports will be saved here"
+    },
+    {
+      "name": "googleClientId",
+      "type": "textfield",
+      "required": false,
+      "title": "Google Client Id",
+      "description": "Used To Import Google Events from Google"
+    },
+    {
+      "name": "googleEmail",
+      "type": "textfield",
+      "required": false,
+      "title": "Google Email",
+      "description": "Used To Import Google Events from Google"
+    },
+    {
+      "name": "googleClientSecret",
+      "type": "password",
+      "required": false,
+      "title": "Google Client Secret",
+      "description": "Used To Import Google Events from Google"
     }
   ],
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
     "@raycast/api": "^1.48.9",
     "@types/lodash": "^4.14.191",
+    "googleapis": "^105.0.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "node-fetch": "^3.3.1"
   },
   "devDependencies": {
     "@raycast/eslint-config": "1.0.5",
