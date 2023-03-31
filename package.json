@@ -39,13 +39,6 @@
       "required": false,
       "title": "Google Email",
       "description": "Used To Import Google Events from Google"
-    },
-    {
-      "name": "googleClientSecret",
-      "type": "password",
-      "required": false,
-      "title": "Google Client Secret",
-      "description": "Used To Import Google Events from Google"
     }
   ],
   "dependencies": {

@@ -8,11 +8,11 @@ import { Task } from "../type/Task";
 // Create an OAuth client ID via https://console.developers.google.com/apis/credentials
 // As application type choose "iOS" (required for PKCE)
 // As Bundle ID enter: com.raycast
-const { googleClientId, googleClientSecret, googleMail }: PreferencesType = getPreferenceValues();
+const { googleClientId, googleEmail }: PreferencesType = getPreferenceValues();
 const clientId = googleClientId;
 
 const client = new OAuth.PKCEClient({
-  redirectMethod: OAuth.RedirectMethod.Web,
+  redirectMethod: OAuth.RedirectMethod.AppURI,
   providerName: "Google",
   providerIcon: "google-logo.png",
   providerId: "google",
@@ -43,13 +43,12 @@ export async function authorize(): Promise<void> {
 }
 
 async function fetchTokens(authRequest: OAuth.AuthorizationRequest, authCode: string): Promise<OAuth.TokenResponse> {
-  if (!clientId || !googleClientSecret) return Promise.reject(new Error("No Client ID or Client Secret provided"));
+  if (!clientId) return Promise.reject(new Error("No Client ID or Client Secret provided"));
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("code", authCode);
   params.append("verifier", authRequest.codeVerifier);
   params.append("grant_type", "authorization_code");
-  params.append("client_secret", googleClientSecret);
   params.append("redirect_uri", authRequest.redirectURI);
 
   const response = await fetch("https://oauth2.googleapis.com/token", { method: "POST", body: params });
@@ -61,7 +60,7 @@ async function fetchTokens(authRequest: OAuth.AuthorizationRequest, authCode: st
 }
 
 async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse> {
-  if (!clientId || !googleClientSecret) return Promise.reject(new Error("No Client ID or Client Secret provided"));
+  if (!clientId) return Promise.reject(new Error("No Client ID provided"));
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("refresh_token", refreshToken);
@@ -80,14 +79,14 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
 // API
 
 export async function fetchEvents() {
-  if (!clientId || !googleClientSecret || !googleMail) return [];
+  if (!clientId || !googleEmail) return [];
   const params = new URLSearchParams();
   params.append("singleEvents", "true");
   params.append("orderBy", "startTime");
   params.append("timeMin", new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString());
   params.append("timeMax", new Date(new Date().setUTCHours(23, 59, 59, 59)).toISOString());
   const response = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/${googleMail}/events?` + params.toString(),
+    `https://www.googleapis.com/calendar/v3/calendars/${googleEmail}/events?` + params.toString(),
     {
       headers: {
         "Content-Type": "application/json",
