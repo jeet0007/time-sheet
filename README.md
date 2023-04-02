@@ -29,7 +29,7 @@ To import tasks from the Google Calendar you will need to follow the following S
 </ol>
 Finally you have the client id <br>
 You now need to set the Google Calendar client in the Extension configuration 
-
+Checkout [Raycase Manual](https://manual.raycast.com/preferences) for instructions 
 
 
 ## Features
