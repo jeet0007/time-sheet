@@ -1,6 +1,7 @@
 import { getPreferenceValues, OAuth } from "@raycast/api";
 import moment from "moment";
 import fetch from "node-fetch";
+import { randomUUID } from "node:crypto";
 import { PreferencesType } from "../type/config";
 import { Event } from "../type/Event";
 import { Task } from "../type/Task";
@@ -16,27 +17,25 @@ const client = new OAuth.PKCEClient({
   providerName: "Google",
   providerIcon: "google-logo.png",
   providerId: "google",
-  description: "Connect your Google account\n(Raycast Extension Demo)",
+  description: "Connect your Google account\n",
 });
 
 // Authorization
 
 export async function authorize(): Promise<void> {
-  if (!clientId) return;
+  if (!client || !clientId) return;
   const tokenSet = await client.getTokens();
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
       await client.setTokens(await refreshTokens(tokenSet.refreshToken));
     }
-
     return;
   }
 
   const authRequest = await client.authorizationRequest({
     endpoint: "https://accounts.google.com/o/oauth2/v2/auth",
     clientId: clientId,
-    scope:
-      "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar.readonly",
+    scope: "https://www.googleapis.com/auth/calendar.readonly",
   });
   const { authorizationCode } = await client.authorize(authRequest);
   await client.setTokens(await fetchTokens(authRequest, authorizationCode));
@@ -78,13 +77,13 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
 
 // API
 
-export async function fetchEvents() {
+export async function fetchEvents(date: Date) {
   if (!clientId || !googleEmail) return [];
   const params = new URLSearchParams();
   params.append("singleEvents", "true");
   params.append("orderBy", "startTime");
-  params.append("timeMin", new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString());
-  params.append("timeMax", new Date(new Date().setUTCHours(23, 59, 59, 59)).toISOString());
+  params.append("timeMin", new Date(date.setUTCHours(0, 0, 0, 0)).toISOString());
+  params.append("timeMax", new Date(date.setUTCHours(23, 59, 59, 59)).toISOString());
   const response = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${googleEmail}/events?` + params.toString(),
     {
@@ -111,7 +110,7 @@ export async function fetchEvents() {
     const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
 
     return {
-      id: 1,
+      id: randomUUID(),
       task: item.summary,
       module: "Meeting",
       manhours,

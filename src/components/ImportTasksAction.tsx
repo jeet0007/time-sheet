@@ -1,11 +1,12 @@
 import { Action, Icon } from "@raycast/api";
+import { ImportFromGoogleForm } from "./ImportFromGoogleForm";
 
-export const ImportTasksAction = (props: { onImport: () => void }) => {
+export const ImportTasksAction = (props: { onImport: (date: Date) => void }) => {
     return (
-        <Action
+        <Action.Push
             icon={Icon.Calendar}
             title="Import From Google Calendar"
-            onAction={props.onImport}
+            target={<ImportFromGoogleForm onImport={props.onImport} />}
         />
     );
 }

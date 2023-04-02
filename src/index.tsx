@@ -9,6 +9,7 @@ import { ExportFileAction } from "./components/ExportFileAction";
 import { Task } from "./type/Task";
 import { ImportTasksAction } from "./components/ImportTasksAction";
 import * as google from './service/google'
+import { randomUUID } from "node:crypto";
 
 export type State = {
   tasks: Task[],
@@ -58,53 +59,51 @@ export default function Command() {
 
   useEffect(() => {
     const { tasks } = state;
-      const groupedTasks = tasks.reduce((acc: { date: string, tasks: Task[], totalManhours: number }[], task) => {
-        const date = task.date;
-        const index = acc.findIndex(group => group.date === date);
-        if (index === -1) {
-          acc.push({
-            date,
-            tasks: [task],
-            totalManhours: (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours
-          });
-        } else {
-          acc[index].tasks.push(task);
-          acc[index].totalManhours += (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours;
-        }
-        return acc;
-      }, []);
+    const groupedTasks = tasks.reduce((acc: { date: string, tasks: Task[], totalManhours: number }[], task) => {
+      const date = task.date;
+      const index = acc.findIndex(group => group.date === date);
+      if (index === -1) {
+        acc.push({
+          date,
+          tasks: [task],
+          totalManhours: (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours
+        });
+      } else {
+        acc[index].tasks.push(task);
+        acc[index].totalManhours += (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours;
+      }
+      return acc;
+    }, []);
     setGroupedTask(groupedTasks)
+  }, [state, state.tasks])
 
-  }, [state.tasks])
-
-  const handleDelete = useCallback((id: number) => {
+  const handleDelete = useCallback((id: string) => {
     setState((previous) => {
       const newTasks = previous.tasks.filter((task) => task.id !== id);
       return { ...previous, tasks: newTasks };
     });
-  }, [setState]);
+  }, [setState, state.tasks]);
 
-  const handleImportFromGoogle = useCallback(async () => {
+  const handleImportFromGoogle = useCallback(async (date: Date) => {
     try {
-      console.log('Importing')
+      setState({ ...state, isLoading: true })
       await google.authorize()
-      const events = await google.fetchEvents()
-      let length = state.tasks.length
+      const events = await google.fetchEvents(date)
       const newTasks = events.map(task => {
-        const taskWithId = { ...task, id: length + 1 }
-        length += 1;
+        const taskWithId = { ...task, id: randomUUID() }
         return taskWithId
       })
-      setState((previous) => ({ ...previous, tasks: [...state.tasks, ...newTasks] }));
+      setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
+      pop()
     } catch (error) {
       console.error(error)
     }
-  }, [])
+  }, [state.tasks, setState])
 
 
   const handleCreate = useCallback(
     (task: Task) => {
-      const newTask = [...state.tasks, { ...task, id: state.tasks.length + 1 }];
+      const newTask = [...state.tasks, { ...task, id: randomUUID() }];
       setState((previous) => ({ ...previous, tasks: newTask }));
       pop()
     },

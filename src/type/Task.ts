@@ -1,5 +1,5 @@
 export type Task = {
-  id: number;
+  id: string;
   manhours: number;
   module?: string;
   project: string;

@@ -8,7 +8,7 @@ import { ImportTasksAction } from "./ImportTasksAction"
 export interface EmptyViewProps {
     tasks: Task[]
     onCreate: (task: Task) => void
-    onImport: () => void
+    onImport: (date: Date) => void
 }
 
 export const EmptyView = ({ onCreate, onImport }: EmptyViewProps) => {

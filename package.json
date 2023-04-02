@@ -44,6 +44,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "@raycast/api": "^1.48.9",
+    "@raycast/utils": "^1.5.2",
     "@types/lodash": "^4.14.191",
     "googleapis": "^105.0.0",
     "lodash": "^4.17.21",
