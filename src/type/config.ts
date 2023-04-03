@@ -1,5 +1,6 @@
 export type PreferencesType = {
-  saveDirectory: string;
-  googleClientId?: string;
-  googleEmail?: string;
+    saveDirectory: string;
+    googleClientId?: string;
+    googleEmail?: string;
+    exportType: string;
 };
