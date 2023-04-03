@@ -10,6 +10,7 @@ import { Task } from "./type/Task";
 import { ImportTasksAction } from "./components/ImportTasksAction";
 import * as google from './service/google'
 import { randomUUID } from "node:crypto";
+import YAML from 'js-yaml';
 
 export type State = {
   tasks: Task[],
@@ -19,14 +20,13 @@ export type State = {
 
 export function getSaveDirectory(): string {
   let { saveDirectory } = getPreferenceValues();
-  console.log()
   saveDirectory = saveDirectory.replace("~", homedir());
   return resolve(saveDirectory);
 }
 
 export default function Command() {
+  const { exportType = "json" } = getPreferenceValues();
   const { pop } = useNavigation();
-
 
 
   const [state, setState] = useState<State>({
@@ -48,11 +48,10 @@ export default function Command() {
         const tasks: Task[] = JSON.parse(storedTasks);
         setState((previous) => ({ ...previous, tasks, isLoading: false }));
       } catch (e) {
-        // can't decode todos
         setState((previous) => ({ ...previous, tasks: [], isLoading: false }));
       }
     })();
-  }, []);
+  }, [setState]);
   useEffect(() => {
     LocalStorage.setItem("tasks", JSON.stringify(state.tasks));
   }, [state.tasks]);
@@ -120,11 +119,19 @@ export default function Command() {
   }, [state.tasks, setState])
 
   const handleExport = useCallback(() => {
-    const json = JSON.stringify(state.tasks);
-    const filename = `${getSaveDirectory()}/${moment().format("DD-MM-YYYY")}_tasks.json`;
-    writeFileSync(filename, json, "utf-8");
+    let data;
+    let extension;
+    if (exportType === 'json') {
+      data = JSON.stringify(state.tasks);
+      extension = 'json';
+    } else {
+      data = YAML.dump(state.tasks);
+      extension = 'yaml';
+    }
+    const filename = `${getSaveDirectory()}/${moment().format("DD-MM-YYYY")}_tasks.${extension}`;
+    writeFileSync(filename, data, "utf-8");
     setState({ ...state, tasks: [] })
-  }, [state.tasks])
+  }, [state.tasks, setState])
 
 
   return (

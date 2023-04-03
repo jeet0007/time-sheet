@@ -108,7 +108,6 @@ export async function fetchEvents(date: Date) {
     const startTime = new Date(item.start.dateTime);
     const endTime = new Date(item.end.dateTime);
     const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
-
     return {
       id: randomUUID(),
       task: item.summary,
@@ -119,7 +118,6 @@ export async function fetchEvents(date: Date) {
     };
   });
   // filter tasks
-  const filterCriteria = ["Lunch"];
-  const filteredTasks = tasks.filter((item: Task) => !filterCriteria.includes(item.task));
-  return filteredTasks;
+  const filterCriteria = ["Lunch", "Out of office"];
+  return tasks.filter((item: Task) => !filterCriteria.includes(item.task));
 }

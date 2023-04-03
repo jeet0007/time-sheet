@@ -3,6 +3,7 @@ export type Event = {
   id: string;
   created: Date;
   eventType: string;
+  status: "confirmed" | "deleted" | "accepted";
   start: {
     dateTime: string;
     timeZone: string;
