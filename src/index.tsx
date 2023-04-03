@@ -1,4 +1,4 @@
-import { ActionPanel, List, LocalStorage, getPreferenceValues, useNavigation } from "@raycast/api";
+import { ActionPanel, List, LocalStorage, Toast, getPreferenceValues, showToast, useNavigation } from "@raycast/api";
 import { writeFileSync } from "fs";
 import moment from "moment";
 import { homedir } from "node:os";
@@ -77,10 +77,24 @@ export default function Command() {
   }, [state, state.tasks])
 
   const handleDelete = useCallback((id: string) => {
-    setState((previous) => {
-      const newTasks = previous.tasks.filter((task) => task.id !== id);
-      return { ...previous, tasks: newTasks };
-    });
+    try {
+
+      setState((previous) => {
+        const newTasks = previous.tasks.filter((task) => task.id !== id);
+        return { ...previous, tasks: newTasks };
+      });
+      showToast({
+        style: Toast.Style.Success,
+        title: "Yay!",
+        message: `Task deleted`,
+      });
+    } catch (error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Opps!",
+        message: `Error deleting tasks`,
+      });
+    }
   }, [setState, state.tasks]);
 
   const handleImportFromGoogle = useCallback(async (date: Date) => {
@@ -94,43 +108,94 @@ export default function Command() {
       })
       setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
       pop()
+      showToast({
+        style: Toast.Style.Success,
+        title: "Yay!",
+        message: `Task Imported`,
+      });
     } catch (error) {
-      console.error(error)
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Opps!",
+        message: `Error importing tasks`,
+      });
     }
   }, [state.tasks, setState])
 
 
   const handleCreate = useCallback(
     (task: Task) => {
-      const newTask = [...state.tasks, { ...task, id: randomUUID() }];
-      setState((previous) => ({ ...previous, tasks: newTask }));
-      pop()
+      try {
+        const newTask = [...state.tasks, { ...task, id: randomUUID() }];
+        setState((previous) => ({ ...previous, tasks: newTask }));
+        pop()
+        showToast({
+          style: Toast.Style.Success,
+          title: "Yay!",
+          message: `Task created`,
+        });
+      } catch (error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Opps!",
+          message: `Error creating tasks`,
+        });
+      }
     },
     [state.tasks, setState]
   );
 
   const handleEdit = useCallback((values: Task) => {
-    const newTasks = [...state.tasks];
-    const index = newTasks.findIndex((task) => task.id === values.id);
-    console.log(values)
-    newTasks[index] = { ...values }
-    setState((previous) => ({ ...previous, tasks: newTasks }));
-    pop()
+    try {
+      const newTasks = [...state.tasks];
+      const index = newTasks.findIndex((task) => task.id === values.id);
+      console.log(values)
+      newTasks[index] = { ...values }
+      setState((previous) => ({ ...previous, tasks: newTasks }));
+      pop()
+      showToast({
+        style: Toast.Style.Success,
+        title: "Yay!",
+        message: `Task edited`,
+      });
+    } catch (error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Opps!",
+        message: `Error editing tasks`,
+      });
+    }
+
   }, [state.tasks, setState])
 
   const handleExport = useCallback(() => {
-    let data;
-    let extension;
-    if (exportType === 'json') {
-      data = JSON.stringify(state.tasks);
-      extension = 'json';
-    } else {
-      data = YAML.dump(state.tasks);
-      extension = 'yaml';
+    try {
+      let data;
+      let extension;
+      if (exportType === 'json') {
+        data = JSON.stringify(state.tasks);
+        extension = 'json';
+      } else {
+        data = YAML.dump(state.tasks);
+        extension = 'yaml';
+      }
+      const filename = `${getSaveDirectory()}/${moment().format("DD-MM-YYYY")}_tasks.${extension}`;
+      writeFileSync(filename, data, "utf-8");
+      setState({ ...state, tasks: [] })
+
+      showToast({
+        style: Toast.Style.Success,
+        title: "Yay!",
+        message: `Task created`,
+      });
+    } catch (error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Opps!",
+        message: `Error exporting tasks`,
+      });
     }
-    const filename = `${getSaveDirectory()}/${moment().format("DD-MM-YYYY")}_tasks.${extension}`;
-    writeFileSync(filename, data, "utf-8");
-    setState({ ...state, tasks: [] })
+
   }, [state.tasks, setState])
 
 
