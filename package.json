@@ -21,7 +21,7 @@
     {
       "name": "saveDirectory",
       "type": "textfield",
-      "default": "~",
+      "default": "~/Desktop",
       "required": true,
       "title": "Save Exports Directory",
       "description": "All Exports will be saved here"
@@ -29,21 +29,21 @@
     {
       "name": "googleClientId",
       "type": "textfield",
-      "required": false,
+      "required": true,
       "title": "Google Client Id",
-      "description": "Used To Import Google Events from Google"
+      "description": "Used To Import Google Events from Google (Client Id of the account)"
     },
     {
       "name": "googleEmail",
       "type": "textfield",
-      "required": false,
+      "required": true,
       "title": "Google Email",
-      "description": "Used To Import Google Events from Google"
+      "description": "Used To Import Google Events from Google (Email of the account)"
     },
     {
       "name": "exportType",
       "type": "textfield",
-      "required": false,
+      "required": true,
       "default": "json",
       "title": "File type for exported files",
       "description": "Used To Export Events to file (json, yaml)"

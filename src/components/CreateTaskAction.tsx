@@ -11,6 +11,7 @@ export const CreateTaskAction = (props: CreateTaskProps) => {
         <Action.Push
             icon={Icon.Pencil}
             title="Create New Task"
+            shortcut={{ modifiers: ["ctrl"], key: "n" }}
             target={<CreateTaskForm onCreate={props.onCreate} />}
         />
 

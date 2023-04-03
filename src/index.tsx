@@ -200,7 +200,7 @@ export default function Command() {
 
 
   return (
-    <List
+    <List 
       isLoading={state.isLoading}
     >
       <EmptyView onCreate={handleCreate} tasks={state.tasks} onImport={handleImportFromGoogle} />
@@ -235,7 +235,6 @@ export default function Command() {
           </List.Section>
         ))
       }
-
     </List>
   );
 }
