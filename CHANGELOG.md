@@ -29,3 +29,4 @@
 - [Feature] Added support to export yaml file format
 - [Feature] Added success and error toast to all interactions
 - [Enhancement] Added shortcut keys for create task
+- [Chore] Fix lint

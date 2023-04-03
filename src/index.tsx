@@ -8,15 +8,14 @@ import { CreateTaskAction, DeleteTaskAction, EditTaskAction, EmptyView } from ".
 import { ExportFileAction } from "./components/ExportFileAction";
 import { Task } from "./type/Task";
 import { ImportTasksAction } from "./components/ImportTasksAction";
-import * as google from './service/google'
+import * as google from "./service/google";
 import { randomUUID } from "node:crypto";
-import YAML from 'js-yaml';
+import YAML from "js-yaml";
 
 export type State = {
-  tasks: Task[],
-  isLoading: boolean,
-}
-
+  tasks: Task[];
+  isLoading: boolean;
+};
 
 export function getSaveDirectory(): string {
   let { saveDirectory } = getPreferenceValues();
@@ -28,13 +27,11 @@ export default function Command() {
   const { exportType = "json" } = getPreferenceValues();
   const { pop } = useNavigation();
 
-
   const [state, setState] = useState<State>({
     tasks: [],
     isLoading: true,
-  })
-  const [groupedTasks, setGroupedTask] = useState<{ date: string, tasks: Task[], totalManhours: number }[]>([])
-
+  });
+  const [groupedTasks, setGroupedTask] = useState<{ date: string; tasks: Task[]; totalManhours: number }[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -58,77 +55,81 @@ export default function Command() {
 
   useEffect(() => {
     const { tasks } = state;
-    const groupedTasks = tasks.reduce((acc: { date: string, tasks: Task[], totalManhours: number }[], task) => {
+    const groupedTasks = tasks.reduce((acc: { date: string; tasks: Task[]; totalManhours: number }[], task) => {
       const date = task.date;
-      const index = acc.findIndex(group => group.date === date);
+      const index = acc.findIndex((group) => group.date === date);
       if (index === -1) {
         acc.push({
           date,
           tasks: [task],
-          totalManhours: (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours
+          totalManhours: typeof task.manhours === "string" ? parseInt(task.manhours) : task.manhours,
         });
       } else {
         acc[index].tasks.push(task);
-        acc[index].totalManhours += (typeof task.manhours === 'string') ? parseInt(task.manhours) : task.manhours;
+        acc[index].totalManhours += typeof task.manhours === "string" ? parseInt(task.manhours) : task.manhours;
       }
       return acc;
     }, []);
-    setGroupedTask(groupedTasks)
-  }, [state, state.tasks])
+    setGroupedTask(groupedTasks);
+  }, [state, state.tasks]);
 
-  const handleDelete = useCallback((id: string) => {
-    try {
+  const handleDelete = useCallback(
+    (id: string) => {
+      try {
+        setState((previous) => {
+          const newTasks = previous.tasks.filter((task) => task.id !== id);
+          return { ...previous, tasks: newTasks };
+        });
+        showToast({
+          style: Toast.Style.Success,
+          title: "Yay!",
+          message: `Task deleted`,
+        });
+      } catch (error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Opps!",
+          message: `Error deleting tasks`,
+        });
+      }
+    },
+    [setState, state.tasks]
+  );
 
-      setState((previous) => {
-        const newTasks = previous.tasks.filter((task) => task.id !== id);
-        return { ...previous, tasks: newTasks };
-      });
-      showToast({
-        style: Toast.Style.Success,
-        title: "Yay!",
-        message: `Task deleted`,
-      });
-    } catch (error) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Opps!",
-        message: `Error deleting tasks`,
-      });
-    }
-  }, [setState, state.tasks]);
-
-  const handleImportFromGoogle = useCallback(async (date: Date) => {
-    try {
-      setState({ ...state, isLoading: true })
-      await google.authorize()
-      const events = await google.fetchEvents(date)
-      const newTasks = events.map(task => {
-        const taskWithId = { ...task, id: randomUUID() }
-        return taskWithId
-      })
-      setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
-      pop()
-      showToast({
-        style: Toast.Style.Success,
-        title: "Yay!",
-        message: `Task Imported`,
-      });
-    } catch (error) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Opps!",
-        message: `Error importing tasks`,
-      });
-    }
-  }, [state.tasks, setState])
-
+  const handleImportFromGoogle = useCallback(
+    async (date: Date) => {
+      try {
+        setState({ ...state, isLoading: true });
+        await google.authorize();
+        const events = await google.fetchEvents(date);
+        const newTasks = events.map((task) => {
+          const taskWithId = { ...task, id: randomUUID() };
+          return taskWithId;
+        });
+        setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
+        pop();
+        showToast({
+          style: Toast.Style.Success,
+          title: "Yay!",
+          message: `Task Imported`,
+        });
+      } catch (error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Opps!",
+          message: `Error importing tasks`,
+        });
+      }
+    },
+    [state.tasks, setState]
+  );
 
   const handleCreate = useCallback(
     (task: Task) => {
       try {
         const newTask = [...state.tasks, { ...task, id: randomUUID() }];
         setState((previous) => ({ ...previous, tasks: newTask }));
-        pop()
+        pop();
         showToast({
           style: Toast.Style.Success,
           title: "Yay!",
@@ -145,43 +146,45 @@ export default function Command() {
     [state.tasks, setState]
   );
 
-  const handleEdit = useCallback((values: Task) => {
-    try {
-      const newTasks = [...state.tasks];
-      const index = newTasks.findIndex((task) => task.id === values.id);
-      console.log(values)
-      newTasks[index] = { ...values }
-      setState((previous) => ({ ...previous, tasks: newTasks }));
-      pop()
-      showToast({
-        style: Toast.Style.Success,
-        title: "Yay!",
-        message: `Task edited`,
-      });
-    } catch (error) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Opps!",
-        message: `Error editing tasks`,
-      });
-    }
-
-  }, [state.tasks, setState])
+  const handleEdit = useCallback(
+    (values: Task) => {
+      try {
+        const newTasks = [...state.tasks];
+        const index = newTasks.findIndex((task) => task.id === values.id);
+        console.log(values);
+        newTasks[index] = { ...values };
+        setState((previous) => ({ ...previous, tasks: newTasks }));
+        pop();
+        showToast({
+          style: Toast.Style.Success,
+          title: "Yay!",
+          message: `Task edited`,
+        });
+      } catch (error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Opps!",
+          message: `Error editing tasks`,
+        });
+      }
+    },
+    [state.tasks, setState]
+  );
 
   const handleExport = useCallback(() => {
     try {
       let data;
       let extension;
-      if (exportType === 'json') {
+      if (exportType === "json") {
         data = JSON.stringify(state.tasks);
-        extension = 'json';
+        extension = "json";
       } else {
         data = YAML.dump(state.tasks);
-        extension = 'yaml';
+        extension = "yaml";
       }
       const filename = `${getSaveDirectory()}/${moment().format("DD-MM-YYYY")}_tasks.${extension}`;
       writeFileSync(filename, data, "utf-8");
-      setState({ ...state, tasks: [] })
+      setState({ ...state, tasks: [] });
 
       showToast({
         style: Toast.Style.Success,
@@ -195,47 +198,41 @@ export default function Command() {
         message: `Error exporting tasks`,
       });
     }
-
-  }, [state.tasks, setState])
-
+  }, [state.tasks, setState]);
 
   return (
-    <List 
-      isLoading={state.isLoading}
-    >
+    <List isLoading={state.isLoading}>
       <EmptyView onCreate={handleCreate} tasks={state.tasks} onImport={handleImportFromGoogle} />
-      {
-        groupedTasks.map((group, groupIndex) => (
-          <List.Section
-            key={groupIndex}
-            title={group.date}
-            subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? '' : 's'}  total hours: ${group.totalManhours}`}>
-            {
-              group.tasks.map((task, taskIndex) => (
-                <List.Item
-                  key={taskIndex}
-                  title={task.task}
-                  actions={
-                    <ActionPanel>
-                      <ActionPanel.Section>
-                        <EditTaskAction onEdit={handleEdit} task={task} />
-                      </ActionPanel.Section>
-                      <ActionPanel.Section>
-                        <CreateTaskAction onCreate={handleCreate} />
-                        <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
-                        <ExportFileAction onExport={handleExport} />
-                        <ImportTasksAction onImport={handleImportFromGoogle} />
-                      </ActionPanel.Section>
-                    </ActionPanel>
-                  }
-                  subtitle={`Hours: ${task.manhours}`}
-                />
-              ))
-            }
-          </List.Section>
-        ))
-      }
+      {groupedTasks.map((group, groupIndex) => (
+        <List.Section
+          key={groupIndex}
+          title={group.date}
+          subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? "" : "s"}  total hours: ${
+            group.totalManhours
+          }`}
+        >
+          {group.tasks.map((task, taskIndex) => (
+            <List.Item
+              key={taskIndex}
+              title={task.task}
+              actions={
+                <ActionPanel>
+                  <ActionPanel.Section>
+                    <EditTaskAction onEdit={handleEdit} task={task} />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section>
+                    <CreateTaskAction onCreate={handleCreate} />
+                    <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
+                    <ExportFileAction onExport={handleExport} />
+                    <ImportTasksAction onImport={handleImportFromGoogle} />
+                  </ActionPanel.Section>
+                </ActionPanel>
+              }
+              subtitle={`Hours: ${task.manhours}`}
+            />
+          ))}
+        </List.Section>
+      ))}
     </List>
   );
 }
-
