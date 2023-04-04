@@ -3,4 +3,5 @@ export type PreferencesType = {
     googleClientId?: string;
     googleEmail?: string;
     exportType: string;
+    githubToken?: string;
 };

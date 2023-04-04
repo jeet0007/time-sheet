@@ -35,6 +35,13 @@
       "description": "Used To Import Google Events from Google (Client Id of the account)"
     },
     {
+      "name": "githubToken",
+      "type": "password",
+      "required": false,
+      "title": "Github Token",
+      "description": "Used To Import Github Events from Github (Token of the account)"
+    },
+    {
       "name": "googleEmail",
       "type": "textfield",
       "required": true,
@@ -59,7 +66,8 @@
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "node-fetch": "^3.3.1"
+    "node-fetch": "^3.3.1",
+    "octokit": "^2.0.14"
   },
   "devDependencies": {
     "@raycast/eslint-config": "1.0.5",
