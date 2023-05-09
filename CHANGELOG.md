@@ -33,3 +33,7 @@
 
 ## [Working on github integration] 2023-04-04
 - [Feature] Working on Github integration 
+
+## [Feature] added duplicate task feature 2023-05-09
+- [Feature] Added new duplicate task feature
+

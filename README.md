@@ -37,3 +37,4 @@ Checkout <br>
  * Crete,edit,delete tasks
  * Export tasks to json file
  * Import tasks from google calendar
+ * Duplicate task 
