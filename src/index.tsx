@@ -135,6 +135,16 @@ export default function Command() {
     const handleCreate = useCallback(
         (task: Task) => {
             try {
+                // trim all the string values in the task
+                Object.keys(task).forEach((key: string) => {
+                    const value = task[key as keyof Task];
+                    if (typeof value === 'string') {
+                        task = {
+                            ...task,
+                            [key]: value.trim(),
+                        };
+                    }
+                });
                 const newTask = [...state.tasks, { ...task, id: randomUUID() }];
                 setState((previous) => ({ ...previous, tasks: newTask }));
                 pop();

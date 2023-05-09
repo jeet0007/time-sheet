@@ -3,7 +3,7 @@
     "name": "time-sheet",
     "version": "1.0.0",
     "title": "Time sheet",
-    "description": "Automate filling timesheet",
+    "description": "Internal tool to Automate filling timesheet",
     "icon": "icon.png",
     "author": "jeet0007",
     "categories": [
