@@ -13,7 +13,7 @@ npm i
 Finally run the project
 
 ```bash
-yd
+npm run start 
 ```
 
 ## Setup Google Calendar
