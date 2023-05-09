@@ -35,6 +35,6 @@ Checkout <br>
 
 ## Features
  * Crete,edit,delete tasks
- * Export tasks to json file
+ * Export tasks to json or Yaml file
  * Import tasks from google calendar
  * Duplicate task 
