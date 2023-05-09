@@ -267,8 +267,6 @@ export default function Command() {
                                 <ActionPanel>
                                     <ActionPanel.Section>
                                         <EditTaskAction onEdit={handleEdit} task={task} />
-                                    </ActionPanel.Section>
-                                    <ActionPanel.Section>
                                         <CreateTaskAction onCreate={handleCreate} />
                                         <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
                                         <ExportFileAction onExport={handleExport} />

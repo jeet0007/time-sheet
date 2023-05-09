@@ -1,88 +1,88 @@
 {
-  "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "time-sheet",
-  "version": "1.0.0",
-  "title": "Time sheet",
-  "description": "Automate filling timesheet",
-  "icon": "command-icon.png",
-  "author": "jeet0007",
-  "categories": [
-    "Productivity"
-  ],
-  "license": "MIT",
-  "commands": [
-    {
-      "name": "index",
-      "title": "Time Sheet",
-      "description": "Show Today TimeSheet",
-      "mode": "view"
+    "$schema": "https://www.raycast.com/schemas/extension.json",
+    "name": "time-sheet",
+    "version": "1.0.0",
+    "title": "Time sheet",
+    "description": "Automate filling timesheet",
+    "icon": "icon.png",
+    "author": "jeet0007",
+    "categories": [
+        "Productivity"
+    ],
+    "license": "MIT",
+    "commands": [
+        {
+            "name": "index",
+            "title": "Time Sheet",
+            "description": "Show Today TimeSheet",
+            "mode": "view"
+        }
+    ],
+    "preferences": [
+        {
+            "name": "saveDirectory",
+            "type": "textfield",
+            "default": "~/Desktop",
+            "required": true,
+            "title": "Save Exports Directory",
+            "description": "All Exports will be saved here"
+        },
+        {
+            "name": "googleClientId",
+            "type": "textfield",
+            "required": true,
+            "title": "Google Client Id",
+            "description": "Used To Import Google Events from Google (Client Id of the account)"
+        },
+        {
+            "name": "githubToken",
+            "type": "password",
+            "required": false,
+            "title": "Github Token",
+            "description": "Used To Import Github Events from Github (Token of the account)"
+        },
+        {
+            "name": "googleEmail",
+            "type": "textfield",
+            "required": true,
+            "title": "Google Email",
+            "description": "Used To Import Google Events from Google (Email of the account)"
+        },
+        {
+            "name": "exportType",
+            "type": "textfield",
+            "required": true,
+            "default": "json",
+            "title": "File type for exported files",
+            "description": "Used To Export Events to file (json, yaml)"
+        }
+    ],
+    "dependencies": {
+        "@google-cloud/local-auth": "^2.1.0",
+        "@raycast/api": "^1.48.9",
+        "@raycast/utils": "^1.5.2",
+        "@types/lodash": "^4.14.191",
+        "googleapis": "^105.0.0",
+        "js-yaml": "^4.1.0",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.4",
+        "node-fetch": "^3.3.1",
+        "octokit": "^2.0.14"
+    },
+    "devDependencies": {
+        "@raycast/eslint-config": "1.0.5",
+        "@types/js-yaml": "^4.0.5",
+        "@types/node": "18.8.3",
+        "@types/react": "18.0.9",
+        "eslint": "^7.32.0",
+        "prettier": "^2.5.1",
+        "typescript": "^4.4.3"
+    },
+    "scripts": {
+        "build": "ray build -e dist",
+        "dev": "ray develop",
+        "fix-lint": "ray lint --fix",
+        "lint": "ray lint",
+        "publish": "ray publish"
     }
-  ],
-  "preferences": [
-    {
-      "name": "saveDirectory",
-      "type": "textfield",
-      "default": "~/Desktop",
-      "required": true,
-      "title": "Save Exports Directory",
-      "description": "All Exports will be saved here"
-    },
-    {
-      "name": "googleClientId",
-      "type": "textfield",
-      "required": true,
-      "title": "Google Client Id",
-      "description": "Used To Import Google Events from Google (Client Id of the account)"
-    },
-    {
-      "name": "githubToken",
-      "type": "password",
-      "required": false,
-      "title": "Github Token",
-      "description": "Used To Import Github Events from Github (Token of the account)"
-    },
-    {
-      "name": "googleEmail",
-      "type": "textfield",
-      "required": true,
-      "title": "Google Email",
-      "description": "Used To Import Google Events from Google (Email of the account)"
-    },
-    {
-      "name": "exportType",
-      "type": "textfield",
-      "required": true,
-      "default": "json",
-      "title": "File type for exported files",
-      "description": "Used To Export Events to file (json, yaml)"
-    }
-  ],
-  "dependencies": {
-    "@google-cloud/local-auth": "^2.1.0",
-    "@raycast/api": "^1.48.9",
-    "@raycast/utils": "^1.5.2",
-    "@types/lodash": "^4.14.191",
-    "googleapis": "^105.0.0",
-    "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21",
-    "moment": "^2.29.4",
-    "node-fetch": "^3.3.1",
-    "octokit": "^2.0.14"
-  },
-  "devDependencies": {
-    "@raycast/eslint-config": "1.0.5",
-    "@types/js-yaml": "^4.0.5",
-    "@types/node": "18.8.3",
-    "@types/react": "18.0.9",
-    "eslint": "^7.32.0",
-    "prettier": "^2.5.1",
-    "typescript": "^4.4.3"
-  },
-  "scripts": {
-    "build": "ray build -e dist",
-    "dev": "ray develop",
-    "fix-lint": "ray lint --fix",
-    "lint": "ray lint",
-    "publish": "ray publish"
-  }
 }
