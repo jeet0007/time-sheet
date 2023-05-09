@@ -20,6 +20,7 @@ import * as github from './service/github';
 import { randomUUID } from 'node:crypto';
 import YAML from 'js-yaml';
 import { PreferencesType } from './type/config';
+import { trimStringInObject } from './utils/object';
 export type State = {
     tasks: Task[];
     isLoading: boolean;
@@ -135,16 +136,7 @@ export default function Command() {
     const handleCreate = useCallback(
         (task: Task) => {
             try {
-                // trim all the string values in the task
-                Object.keys(task).forEach((key: string) => {
-                    const value = task[key as keyof Task];
-                    if (typeof value === 'string') {
-                        task = {
-                            ...task,
-                            [key]: value.trim(),
-                        };
-                    }
-                });
+                trimStringInObject(task);
                 const newTask = [...state.tasks, { ...task, id: randomUUID() }];
                 setState((previous) => ({ ...previous, tasks: newTask }));
                 pop();
@@ -167,6 +159,7 @@ export default function Command() {
     const handleEdit = useCallback(
         (values: Task) => {
             try {
+                trimStringInObject(values);
                 const newTasks = [...state.tasks];
                 const index = newTasks.findIndex((task) => task.id === values.id);
                 console.log(values);
