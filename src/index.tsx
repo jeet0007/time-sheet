@@ -4,7 +4,14 @@ import moment from "moment";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { useCallback, useEffect, useState } from "react";
-import { CreateTaskAction, DeleteTaskAction, EditTaskAction, EmptyView, ImportFromGithubAction } from './components';
+import {
+    CreateTaskAction,
+    DeleteTaskAction,
+    DuplicateTaskAction,
+    EditTaskAction,
+    EmptyView,
+    ImportFromGithubAction,
+} from './components';
 import { ExportFileAction } from './components/ExportFileAction';
 import { Task } from './type/Task';
 import { ImportTasksAction } from './components/ImportTasksAction';
@@ -171,6 +178,31 @@ export default function Command() {
         },
         [state.tasks, setState]
     );
+
+    const handleDuplicate = useCallback(
+        (id: string) => {
+            try {
+                const newTasks = [...state.tasks];
+                const index = newTasks.findIndex((task) => task.id === id);
+                const newTask = { ...newTasks[index], id: randomUUID() };
+                newTasks.splice(index, 0, newTask);
+                setState((previous) => ({ ...previous, tasks: newTasks }));
+                showToast({
+                    style: Toast.Style.Success,
+                    title: 'Yay!',
+                    message: `Task duplicated`,
+                });
+            } catch (error) {
+                showToast({
+                    style: Toast.Style.Failure,
+                    title: 'Opps!',
+                    message: `Error duplicating tasks`,
+                });
+            }
+        },
+        [state.tasks, setState]
+    );
+
     const handleImportFromGithub = useCallback(async () => {
         try {
             console.log(await github.getRepositories());
@@ -240,6 +272,7 @@ export default function Command() {
                                         <CreateTaskAction onCreate={handleCreate} />
                                         <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
                                         <ExportFileAction onExport={handleExport} />
+                                        <DuplicateTaskAction onDupe={() => handleDuplicate(task.id)} />
                                         {googleClientId && <ImportTasksAction onImport={handleImportFromGoogle} />}
                                         {githubToken && <ImportFromGithubAction onImport={handleImportFromGithub} />}
                                     </ActionPanel.Section>
