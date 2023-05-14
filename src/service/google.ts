@@ -77,47 +77,47 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
 
 // API
 
-export async function fetchEvents(date: Date) {
-  if (!clientId || !googleEmail) return [];
-  const params = new URLSearchParams();
-  params.append("singleEvents", "true");
-  params.append("orderBy", "startTime");
-  params.append("timeMin", new Date(date.setUTCHours(0, 0, 0, 0)).toISOString());
-  params.append("timeMax", new Date(date.setUTCHours(23, 59, 59, 59)).toISOString());
-  const response = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/${googleEmail}/events?` + params.toString(),
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${(await client.getTokens())?.accessToken}`,
-      },
+export async function fetchEvents(date: Date, defaultProject = '108') {
+    if (!clientId || !googleEmail) return [];
+    const params = new URLSearchParams();
+    params.append('singleEvents', 'true');
+    params.append('orderBy', 'startTime');
+    params.append('timeMin', new Date(date.setUTCHours(0, 0, 0, 0)).toISOString());
+    params.append('timeMax', new Date(date.setUTCHours(23, 59, 59, 59)).toISOString());
+    const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${googleEmail}/events?` + params.toString(),
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${(await client.getTokens())?.accessToken}`,
+            },
+        }
+    );
+    if (response.status === 401) {
+        console.log('Clearing tokens');
+        client.removeTokens();
     }
-  );
-  if (response.status === 401) {
-    console.log("Clearing tokens");
-    client.removeTokens();
-  }
-  if (!response.ok) {
-    console.error("fetch Events error:", await response.text());
-    throw new Error(response.statusText);
-  }
+    if (!response.ok) {
+        console.error('fetch Events error:', await response.text());
+        throw new Error(response.statusText);
+    }
 
-  const json = (await response.json()) as { items: Event[] };
-  const { items } = json;
-  const tasks: Task[] = items.map((item: Event) => {
-    const startTime = new Date(item.start.dateTime);
-    const endTime = new Date(item.end.dateTime);
-    const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
-    return {
-      id: randomUUID(),
-      task: item.summary,
-      module: "Meeting",
-      manhours,
-      project: "108",
-      date: moment(new Date(item.start.dateTime)).format("DD-MM-YYYY"),
-    };
-  });
-  // filter tasks
-  const filterCriteria = ["Lunch", "Out of office"];
-  return tasks.filter((item: Task) => !filterCriteria.includes(item.task));
+    const json = (await response.json()) as { items: Event[] };
+    const { items } = json;
+    const tasks: Task[] = items.map((item: Event) => {
+        const startTime = new Date(item.start.dateTime);
+        const endTime = new Date(item.end.dateTime);
+        const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
+        return {
+            id: randomUUID(),
+            task: item.summary,
+            module: 'Meeting',
+            manhours,
+            project: defaultProject,
+            date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
+        };
+    });
+    // filter tasks
+    const filterCriteria = ['Lunch', 'Out of office'];
+    return tasks.filter((item: Task) => !filterCriteria.includes(item.task));
 }
