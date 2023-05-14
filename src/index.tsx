@@ -4,23 +4,17 @@ import moment from "moment";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { useCallback, useEffect, useState } from "react";
-import {
-    CreateTaskAction,
-    DeleteTaskAction,
-    DuplicateTaskAction,
-    EditTaskAction,
-    EmptyView,
-    ImportFromGithubAction,
-} from './components';
+import { CreateTaskAction, DeleteTaskAction, DuplicateTaskAction, EditTaskAction, EmptyView } from './components';
 import { ExportFileAction } from './components/ExportFileAction';
 import { Task } from './type/Task';
 import { ImportTasksAction } from './components/ImportTasksAction';
 import * as google from './service/google';
-import * as github from './service/github';
+import * as jira from './service/jira';
 import { randomUUID } from 'node:crypto';
 import YAML from 'js-yaml';
 import { PreferencesType } from './type/config';
 import { trimStringInObject } from './utils/object';
+import { ImportFromJiraAction } from './components/ImportFromJiraAction';
 export type State = {
     tasks: Task[];
     isLoading: boolean;
@@ -33,7 +27,7 @@ export function getSaveDirectory(): string {
 }
 
 export default function Command() {
-    const { exportType = 'json', googleClientId, githubToken }: PreferencesType = getPreferenceValues();
+    const { exportType = 'json', googleClientId, jiraToken }: PreferencesType = getPreferenceValues();
     const { pop } = useNavigation();
 
     const [state, setState] = useState<State>({
@@ -206,17 +200,23 @@ export default function Command() {
         [state.tasks, setState]
     );
 
-    const handleImportFromGithub = useCallback(async () => {
-        try {
-            console.log(await github.getRepositories());
-        } catch (error) {
-            showToast({
-                style: Toast.Style.Failure,
-                title: 'Opps!',
-                message: `Error importing tasks`,
-            });
-        }
-    }, [state.tasks, setState]);
+    const handleImportFromJira = useCallback(
+        async (date: Date, project: string, status: string) => {
+            try {
+                setState({ ...state, isLoading: true });
+                const data = await jira.getTodaysTasks(date, project, status);
+                console.log('Data', data);
+                setState({ ...state, isLoading: false });
+            } catch (error) {
+                showToast({
+                    style: Toast.Style.Failure,
+                    title: 'Opps!',
+                    message: `Error importing tasks ${error}`,
+                });
+            }
+        },
+        [state.tasks, setState]
+    );
 
     const handleExport = useCallback(() => {
         try {
@@ -253,6 +253,7 @@ export default function Command() {
                 onCreate={handleCreate}
                 tasks={state.tasks}
                 onImport={googleClientId ? handleImportFromGoogle : undefined}
+                onImportFromJira={handleImportFromJira}
             />
             {groupedTasks.map((group, groupIndex) => (
                 <List.Section
@@ -275,7 +276,7 @@ export default function Command() {
                                         <ExportFileAction onExport={handleExport} />
                                         <DuplicateTaskAction onDupe={() => handleDuplicate(task.id)} />
                                         {googleClientId && <ImportTasksAction onImport={handleImportFromGoogle} />}
-                                        {githubToken && <ImportFromGithubAction onImport={handleImportFromGithub} />}
+                                        {jiraToken && <ImportFromJiraAction onImport={handleImportFromJira} />}
                                     </ActionPanel.Section>
                                 </ActionPanel>
                             }

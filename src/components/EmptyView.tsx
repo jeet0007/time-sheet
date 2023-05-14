@@ -3,14 +3,16 @@ import React from 'react';
 import { Task } from '../type/Task';
 import { CreateTaskAction } from './CreateTaskAction';
 import { ImportTasksAction } from './ImportTasksAction';
+import { ImportFromJiraAction } from './ImportFromJiraAction';
 
 export interface EmptyViewProps {
     tasks: Task[];
     onCreate: (task: Task) => void;
     onImport?: (date: Date) => void;
+    onImportFromJira?: (date: Date, project: string, status: string) => void;
 }
 
-export const EmptyView = ({ onCreate, onImport }: EmptyViewProps) => {
+export const EmptyView = ({ onCreate, onImport, onImportFromJira }: EmptyViewProps) => {
     return (
         <List.EmptyView
             icon={'💀'}
@@ -20,6 +22,7 @@ export const EmptyView = ({ onCreate, onImport }: EmptyViewProps) => {
                 <ActionPanel>
                     <CreateTaskAction onCreate={onCreate} />
                     {onImport && <ImportTasksAction onImport={onImport} />}
+                    {onImportFromJira && <ImportFromJiraAction onImport={onImportFromJira} />}
                 </ActionPanel>
             }
         />

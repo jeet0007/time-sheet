@@ -49,6 +49,20 @@
             "description": "Used To Import Google Events from Google (Email of the account)"
         },
         {
+            "name": "jiraEmail",
+            "type": "textfield",
+            "required": false,
+            "title": "Jira Email",
+            "description": "Used To Import Jira Events from Jira (Email of the account)"
+        },
+        {
+            "name": "jiraToken",
+            "type": "password",
+            "required": false,
+            "title": "Jira Token",
+            "description": "Used To Import Jira Events from Jira (Token of the account)"
+        },
+        {
             "name": "exportType",
             "type": "textfield",
             "required": true,

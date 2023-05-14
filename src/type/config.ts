@@ -4,4 +4,6 @@ export type PreferencesType = {
     googleEmail?: string;
     exportType: string;
     githubToken?: string;
+    jiraEmail?: string;
+    jiraToken?: string;
 };
