@@ -27,7 +27,6 @@ export const EditTaskForm = ({ onEdit, task: initialValue }: EditTaskProps) => {
         }
         if (task.manhours < 1 || task.manhours > 8) {
             setManHourError('Hours can not be less then 1 or more then 8');
-            console.log(task.manhours);
         } else {
             setManHourError('');
         }

@@ -58,8 +58,6 @@ export default function Command() {
 
     useEffect(() => {
         const { tasks } = state;
-        console.log('tasks', tasks);
-
         const groupedTasks = tasks.reduce((acc: { date: string; tasks: Task[]; totalManhours: number }[], task) => {
             const date = task.date;
             const index = acc.findIndex((group) => group.date === date);
@@ -75,8 +73,6 @@ export default function Command() {
             }
             return acc;
         }, []);
-        console.log('groupedTasks', groupedTasks);
-
         setGroupedTask(groupedTasks);
     }, [state, state.tasks]);
 
@@ -160,7 +156,6 @@ export default function Command() {
                 trimStringInObject(values);
                 const newTasks = [...state.tasks];
                 const index = newTasks.findIndex((task) => task.id === values.id);
-                console.log(values);
                 newTasks[index] = { ...values };
                 setState((previous) => ({ ...previous, tasks: newTasks }));
                 pop();
@@ -209,8 +204,6 @@ export default function Command() {
             try {
                 setState({ ...state, isLoading: true });
                 const newTasks = await jira.getTodaysTasks(date, project, status, defaultProject);
-                console.log(newTasks);
-
                 if (newTasks.length === 0) {
                     setState({ ...state, isLoading: false });
                     showToast({
