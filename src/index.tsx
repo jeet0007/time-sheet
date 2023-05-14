@@ -58,6 +58,8 @@ export default function Command() {
 
     useEffect(() => {
         const { tasks } = state;
+        console.log('tasks', tasks);
+
         const groupedTasks = tasks.reduce((acc: { date: string; tasks: Task[]; totalManhours: number }[], task) => {
             const date = task.date;
             const index = acc.findIndex((group) => group.date === date);
@@ -73,6 +75,8 @@ export default function Command() {
             }
             return acc;
         }, []);
+        console.log('groupedTasks', groupedTasks);
+
         setGroupedTask(groupedTasks);
     }, [state, state.tasks]);
 
@@ -205,9 +209,19 @@ export default function Command() {
             try {
                 setState({ ...state, isLoading: true });
                 const newTasks = await jira.getTodaysTasks(date, project, status);
+                console.log(newTasks);
+
+                if (newTasks.length === 0) {
+                    setState({ ...state, isLoading: false });
+                    showToast({
+                        style: Toast.Style.Failure,
+                        title: 'Opps!',
+                        message: `No tasks found`,
+                    });
+                    return;
+                }
                 setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
                 pop();
-                setState({ ...state, isLoading: false });
                 showToast({
                     style: Toast.Style.Success,
                     title: 'Yay!',
