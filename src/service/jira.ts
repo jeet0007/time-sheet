@@ -4,6 +4,7 @@ import fetch, { Headers } from 'node-fetch';
 import moment from 'moment';
 import { JiraIssue } from '../type/Jira';
 import { randomUUID } from 'node:crypto';
+import { Task } from '../type/Task';
 
 const { jiraToken, jiraEmail }: PreferencesType = getPreferenceValues();
 const JIRA_URL = 'https://agentmate.atlassian.net';
@@ -38,7 +39,7 @@ export async function getTodaysTasks(date: Date, project: string, status: string
     // TODO: parse data to get the tasks
     if (data && typeof data == 'object') {
         const { issues } = data;
-        return issues.map((issue: JiraIssue) => {
+        const tasks: Task[] = issues.map((issue: JiraIssue) => {
             const { summary, status } = issue?.fields;
 
             const { name } = status;
@@ -52,5 +53,7 @@ export async function getTodaysTasks(date: Date, project: string, status: string
                 date: moment(date).format('DD-MM-YYYY'),
             };
         });
+        return tasks;
     }
+    return [];
 }

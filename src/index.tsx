@@ -204,9 +204,15 @@ export default function Command() {
         async (date: Date, project: string, status: string) => {
             try {
                 setState({ ...state, isLoading: true });
-                const data = await jira.getTodaysTasks(date, project, status);
-                console.log('Data', data);
+                const newTasks = await jira.getTodaysTasks(date, project, status);
+                setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
+                pop();
                 setState({ ...state, isLoading: false });
+                showToast({
+                    style: Toast.Style.Success,
+                    title: 'Yay!',
+                    message: `Task Imported`,
+                });
             } catch (error) {
                 showToast({
                     style: Toast.Style.Failure,
