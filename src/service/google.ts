@@ -122,6 +122,6 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
       };
     });
     // filter tasks
-    const filterCriteria = ['Lunch', 'Out of office'];
-    return tasks.filter((item: Task) => !filterCriteria.includes(item.task));
+    const filterCriteria = ['LUNCH', 'OUT OF OFFICE'];
+    return tasks.filter((item: Task) => !filterCriteria.includes(item.task.toUpperCase()));
 }
