@@ -106,8 +106,8 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
     const { items } = json;
     const tasks: Task[] = items.map((item: Event) => {
       const summary = item.summary;
-      const crNo = summary.match(/[a-zA-Z]{1,20}-[0-9]{1,4}/g);
-      const module = crNo ? crNo[0].split('-')[0] : 'Meeting';
+      const crNo: RegExpMatchArray | null = summary.match(/([a-zA-Z1-9]{3,10})-(\d+)/gm);
+      const module = crNo && crNo[0] ? crNo[0].split('-')[0].toUpperCase() : 'Meeting';
       const startTime = new Date(item.start.dateTime);
       const endTime = new Date(item.end.dateTime);
       const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
@@ -117,7 +117,7 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
           module,
           manhours,
           project: defaultProject,
-          crNo: crNo ? crNo[0] : '',
+          crNo: crNo && crNo[0] ? crNo[0] : '',
           date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
       };
     });
