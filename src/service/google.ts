@@ -105,17 +105,21 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
     const json = (await response.json()) as { items: Event[] };
     const { items } = json;
     const tasks: Task[] = items.map((item: Event) => {
-        const startTime = new Date(item.start.dateTime);
-        const endTime = new Date(item.end.dateTime);
-        const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
-        return {
-            id: randomUUID(),
-            task: item.summary,
-            module: 'Meeting',
-            manhours,
-            project: defaultProject,
-            date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
-        };
+      const summary = item.summary;
+      const crNo = summary.match(/[a-zA-Z]{1,20}-[0-9]{1,4}/g);
+      const module = crNo ? crNo[0].split('-')[0] : 'Meeting';
+      const startTime = new Date(item.start.dateTime);
+      const endTime = new Date(item.end.dateTime);
+      const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60);
+      return {
+          id: randomUUID(),
+          task: item.summary,
+          module,
+          manhours,
+          project: defaultProject,
+          crNo: crNo ? crNo[0] : '',
+          date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
+      };
     });
     // filter tasks
     const filterCriteria = ['Lunch', 'Out of office'];
