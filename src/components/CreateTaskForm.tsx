@@ -17,9 +17,9 @@ export const CreateTaskForm = (props: CreateTaskProps) => {
                 </ActionPanel>
             }
         >
-            <Form.TextField id="task" title="Task" />
+            <Form.TextField id="task" title="Task" autoFocus storeValue />
             <Form.TextField id="manhours" title="Man hours" defaultValue="1" />
-            <Form.TextField id="module" title="Module" />
+            <Form.TextField id="module" title="Module" storeValue />
             <Form.Dropdown id="project" title="Project">
                 <Form.Dropdown.Item value="108" title="[APPMAN] MAC" />
                 <Form.Dropdown.Item value="132" title="MAC-KTAXA" />
