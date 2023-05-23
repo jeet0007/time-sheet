@@ -1,8 +1,8 @@
-# Time sheet
+# Time Sheet
 
-Automate filling timesheet
+Raycast extension to automate filling timesheet
 
-## Usage
+## Installation
 
 Clone the project and install dependencies
 
@@ -10,10 +10,22 @@ Clone the project and install dependencies
 npm i
 ```
 
-Finally run the project
+Build the project
 
 ```bash
-npm run start 
+npm run build
+```
+
+Then you should be able to see the Time Sheet command in your Raycast.
+
+<img src="readme/images/command.png" />
+
+## Development
+
+Start local development
+
+```bash
+npm run dev
 ```
 
 ## Setup Google Calendar
@@ -30,11 +42,11 @@ To import tasks from the Google Calendar you will need to follow the following S
 Finally you have the client id <br>
 You now need to set the Google Calendar client in the Extension configuration 
 Checkout <br>
-<a href="https://manual.raycast.com/preferences">Raycase Manual for instructions on how to do so</a> 
-
+<a href="https://manual.raycast.com/preferences">Raycase Manual for instructions on how to do so</a>
 
 ## Features
- * Crete,edit,delete tasks
- * Export tasks to json or Yaml file
- * Import tasks from google calendar
- * Duplicate task 
+
+-   Crete, edit, delete tasks
+-   Export tasks to json or Yaml file
+-   Import tasks from google calendar
+-   Duplicate task
