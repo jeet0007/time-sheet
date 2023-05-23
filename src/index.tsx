@@ -271,10 +271,9 @@ export default function Command() {
             {groupedTasks.map((group, groupIndex) => (
                 <List.Section
                     key={groupIndex}
-                    title={group.date}
-                    subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? '' : 's'}  total hours: ${
-                        group.totalManhours
-                    }`}
+                    title={`${group.date} (${moment().isSame(group.date, 'day') ? 'Today' : `${moment(group.date, 'DD-MM-YYYY').format('dddd')} ${moment(group.date, 'DD-MM-YYYY').startOf('day').fromNow()}`})`}
+                    subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? '' : 's'} - total hours: ${group.totalManhours
+                        } `}
                 >
                     {group.tasks.map((task, taskIndex) => (
                         <List.Item
@@ -293,11 +292,12 @@ export default function Command() {
                                     </ActionPanel.Section>
                                 </ActionPanel>
                             }
-                            subtitle={`Hours: ${task.manhours}`}
+                            subtitle={`Hours: ${task.manhours} `}
                         />
                     ))}
                 </List.Section>
-            ))}
-        </List>
+            )
+            )}
+        </List >
     );
 }
