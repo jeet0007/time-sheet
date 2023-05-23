@@ -18,7 +18,7 @@ npm run build
 
 Then you should be able to see the Time Sheet command in your Raycast.
 
-<img src="readme/images/command.png" />
+<img src="readme/images/command.png" style="max-width: 500px;" />
 
 ## Development
 
