@@ -1,9 +1,9 @@
-import { ActionPanel, List, LocalStorage, Toast, getPreferenceValues, showToast, useNavigation } from "@raycast/api";
-import { writeFileSync } from "fs";
-import moment from "moment";
-import { homedir } from "node:os";
-import { resolve } from "node:path";
-import { useCallback, useEffect, useState } from "react";
+import { ActionPanel, List, LocalStorage, Toast, getPreferenceValues, showToast, useNavigation } from '@raycast/api';
+import { writeFileSync } from 'fs';
+import moment from 'moment';
+import { homedir } from 'node:os';
+import { resolve } from 'node:path';
+import { useCallback, useEffect, useState } from 'react';
 import { CreateTaskAction, DeleteTaskAction, DuplicateTaskAction, EditTaskAction, EmptyView } from './components';
 import { ExportFileAction } from './components/ExportFileAction';
 import { Task } from './type/Task';
