@@ -23,7 +23,7 @@ export const CreateTaskForm = (props: CreateTaskProps) => {
             <Form.TextField id="module" title="Module" storeValue />
             <Form.Dropdown id="project" title="Project">
                 {projectOptions.map((item) => (
-                    <Form.Dropdown.Item key={item.value} value={item.value} title={item.value} />
+                    <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
                 ))}
             </Form.Dropdown>
             <Form.Checkbox id="isEnhancement" label="Is Enhancement" defaultValue={false} />

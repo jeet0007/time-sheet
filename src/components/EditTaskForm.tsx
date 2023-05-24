@@ -56,7 +56,7 @@ export const EditTaskForm = ({ onEdit, task: initialValue }: EditTaskProps) => {
             <Form.TextField id="module" title="Module" defaultValue={task.module} />
             <Form.Dropdown id="project" title="Project" defaultValue={task.project}>
                 {projectOptions.map((item) => (
-                    <Form.Dropdown.Item key={item.value} value={item.value} title={item.value} />
+                    <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
                 ))}
             </Form.Dropdown>
             <Form.Checkbox id="isEnhancement" label="Is Enhancement" defaultValue={false} />
