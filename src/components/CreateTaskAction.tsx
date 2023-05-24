@@ -9,9 +9,9 @@ interface CreateTaskProps {
 export const CreateTaskAction = (props: CreateTaskProps) => {
     return (
         <Action.Push
-            icon={Icon.Pencil}
+            icon={Icon.Plus}
             title="Create New Task"
-            shortcut={{ modifiers: ['ctrl'], key: 'n' }}
+            shortcut={{ modifiers: ['cmd'], key: 'n' }}
             target={<CreateTaskForm onCreate={props.onCreate} />}
         />
     );

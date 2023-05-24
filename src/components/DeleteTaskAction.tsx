@@ -6,6 +6,7 @@ export const DeleteTaskAction = (props: { onDelete: () => void }) => {
             icon={Icon.Trash}
             title="Delete Task"
             shortcut={{ modifiers: ['ctrl'], key: 'x' }}
+            style={Action.Style.Destructive}
             onAction={props.onDelete}
         />
     );

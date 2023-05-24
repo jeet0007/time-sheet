@@ -38,7 +38,7 @@
         {
             "name": "googleClientId",
             "type": "textfield",
-            "required": true,
+            "required": false,
             "title": "Google Client Id",
             "description": "Used To Import Google Events from Google (Client Id of the account)"
         },
@@ -52,7 +52,7 @@
         {
             "name": "googleEmail",
             "type": "textfield",
-            "required": true,
+            "required": false,
             "title": "Google Email",
             "description": "Used To Import Google Events from Google (Email of the account)"
         },
