@@ -21,7 +21,7 @@ export const CreateTaskForm = (props: CreateTaskProps) => {
             <Form.TextField id="task" title="Task" autoFocus storeValue />
             <Form.TextField id="manhours" title="Man hours" defaultValue="1" />
             <Form.TextField id="module" title="Module" storeValue />
-            <Form.Dropdown id="project" title="Project">
+            <Form.Dropdown id="project" title="Project" storeValue>
                 {projectOptions.map((item) => (
                     <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
                 ))}
