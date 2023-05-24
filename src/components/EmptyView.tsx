@@ -6,7 +6,6 @@ import { ImportTasksAction } from './ImportTasksAction';
 import { ImportFromJiraAction } from './ImportFromJiraAction';
 
 export interface EmptyViewProps {
-    tasks: Task[];
     onCreate: (task: Task) => void;
     onImport?: (date: Date) => void;
     onImportFromJira?: (date: Date, project: string, status: string) => void;

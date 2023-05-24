@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Task } from '../type/Task';
 import { debounce } from 'lodash';
+import { projectOptions } from '../masterdata';
 export interface EditTaskProps {
     task: Task;
     onEdit: (values: Task) => void;
@@ -54,11 +55,9 @@ export const EditTaskForm = ({ onEdit, task: initialValue }: EditTaskProps) => {
             />
             <Form.TextField id="module" title="Module" defaultValue={task.module} />
             <Form.Dropdown id="project" title="Project" defaultValue={task.project}>
-                <Form.Dropdown.Item value="108" title="[APPMAN] MAC" />
-                <Form.Dropdown.Item value="132" title="MAC-KTAXA" />
-                <Form.Dropdown.Item value="51" title="[KTAXA] Advisor Zone" />
-                <Form.Dropdown.Item value="127" title="[Squad] iPaaS" />
-                <Form.Dropdown.Item value="47" title="Leave" />
+                {projectOptions.map((item) => (
+                    <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
+                ))}
             </Form.Dropdown>
             <Form.Checkbox id="isEnhancement" label="Is Enhancement" defaultValue={false} />
             <Form.TextField id="subTaskInput" title="Sub task" defaultValue={task.subTask} />

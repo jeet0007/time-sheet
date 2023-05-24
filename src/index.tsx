@@ -1,10 +1,26 @@
-import { ActionPanel, List, LocalStorage, Toast, getPreferenceValues, showToast, useNavigation } from '@raycast/api';
+import {
+    ActionPanel,
+    Icon,
+    List,
+    LocalStorage,
+    Toast,
+    getPreferenceValues,
+    showToast,
+    useNavigation,
+} from '@raycast/api';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { useCallback, useEffect, useState } from 'react';
-import { CreateTaskAction, DeleteTaskAction, DuplicateTaskAction, EditTaskAction, EmptyView } from './components';
+import {
+    CreateTaskAction,
+    DeleteTaskAction,
+    DuplicateTaskAction,
+    EditTaskAction,
+    EmptyView,
+    ToggleShowDetailsAction,
+} from './components';
 import { ExportFileAction } from './components/ExportFileAction';
 import { Task } from './type/Task';
 import { ImportTasksAction } from './components/ImportTasksAction';
@@ -15,9 +31,13 @@ import YAML from 'js-yaml';
 import { PreferencesType } from './type/config';
 import { trimStringInObject } from './utils/object';
 import { ImportFromJiraAction } from './components/ImportFromJiraAction';
+import { pluralize } from './utils/string';
+import { TaskDetail } from './components/TaskDetail';
+
 export type State = {
     tasks: Task[];
     isLoading: boolean;
+    isShowingDetail: boolean;
 };
 
 export function getSaveDirectory(): string {
@@ -33,6 +53,7 @@ export default function Command() {
     const [state, setState] = useState<State>({
         tasks: [],
         isLoading: true,
+        isShowingDetail: false,
     });
     const [groupedTasks, setGroupedTask] = useState<{ date: string; tasks: Task[]; totalManhours: number }[]>([]);
 
@@ -52,6 +73,7 @@ export default function Command() {
             }
         })();
     }, [setState]);
+
     useEffect(() => {
         LocalStorage.setItem('tasks', JSON.stringify(state.tasks));
     }, [state.tasks]);
@@ -109,7 +131,7 @@ export default function Command() {
                     const taskWithId = { ...task, id: randomUUID() };
                     return taskWithId;
                 });
-                setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
+                setState((prev) => ({ ...prev, tasks: [...state.tasks, ...newTasks], isLoading: false }));
                 pop();
                 showToast({
                     style: Toast.Style.Success,
@@ -213,7 +235,7 @@ export default function Command() {
                     });
                     return;
                 }
-                setState({ tasks: [...state.tasks, ...newTasks], isLoading: false });
+                setState((prev) => ({ ...prev, tasks: [...prev.tasks, ...newTasks], isLoading: false }));
                 pop();
                 showToast({
                     style: Toast.Style.Success,
@@ -260,44 +282,78 @@ export default function Command() {
         }
     }, [state.tasks, setState]);
 
+    const handleToggleShowDetails = useCallback(() => {
+        setState((prev) => ({ ...prev, isShowingDetail: !prev.isShowingDetail }));
+    }, []);
+
     return (
-        <List isLoading={state.isLoading}>
+        <List isLoading={state.isLoading} isShowingDetail={state.isShowingDetail}>
             <EmptyView
                 onCreate={handleCreate}
-                tasks={state.tasks}
                 onImport={googleClientId ? handleImportFromGoogle : undefined}
-                onImportFromJira={handleImportFromJira}
+                onImportFromJira={jiraToken ? handleImportFromJira : undefined}
             />
-            {groupedTasks.map((group, groupIndex) => (
-                <List.Section
-                    key={groupIndex}
-                    title={`${group.date} (${moment().isSame(group.date, 'day') ? 'Today' : `${moment(group.date, 'DD-MM-YYYY').format('dddd')} ${moment(group.date, 'DD-MM-YYYY').startOf('day').fromNow()}`})`}
-                    subtitle={`${group.tasks.length} task${group.tasks.length === 1 ? '' : 's'} - total hours: ${group.totalManhours
-                        } `}
-                >
-                    {group.tasks.map((task, taskIndex) => (
-                        <List.Item
-                            key={taskIndex}
-                            title={task.task}
-                            actions={
-                                <ActionPanel>
-                                    <ActionPanel.Section>
-                                        <EditTaskAction onEdit={handleEdit} task={task} />
-                                        <CreateTaskAction onCreate={handleCreate} />
-                                        <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
-                                        <ExportFileAction onExport={handleExport} />
-                                        <DuplicateTaskAction onDupe={() => handleDuplicate(task.id)} />
-                                        {googleClientId && <ImportTasksAction onImport={handleImportFromGoogle} />}
-                                        {jiraToken && <ImportFromJiraAction onImport={handleImportFromJira} />}
-                                    </ActionPanel.Section>
-                                </ActionPanel>
-                            }
-                            subtitle={`Hours: ${task.manhours} `}
-                        />
-                    ))}
-                </List.Section>
-            )
-            )}
-        </List >
+            {groupedTasks.map((group, groupIndex) => {
+                const dateMoment = moment(group.date, 'DD-MM-YYYY');
+                const dateSuffix = dateMoment.calendar({
+                    sameDay: '[Today]',
+                    nextDay: '[Tomorrow]',
+                    nextWeek: '[Next] dddd',
+                    lastDay: '[Yesterday]',
+                    lastWeek: '[Last] dddd',
+                    sameElse: () => `[${[dateMoment.format('dddd'), dateMoment.fromNow()].join(' ')}]`,
+                });
+                return (
+                    <List.Section
+                        key={groupIndex}
+                        title={`${group.date} (${dateSuffix})`}
+                        subtitle={`${pluralize(group.tasks.length, 'task')}, total ${pluralize(
+                            group.totalManhours,
+                            'hour'
+                        )}`}
+                    >
+                        {group.tasks.map((task, taskIndex) => {
+                            return (
+                                <List.Item
+                                    key={taskIndex}
+                                    icon={Icon.Dot}
+                                    title={task.task}
+                                    detail={<TaskDetail task={task} />}
+                                    accessories={[
+                                        task.crNo ? { text: task.crNo, icon: Icon.Document } : {},
+                                        { text: { value: `${task.manhours}` }, icon: Icon.Stopwatch },
+                                    ]}
+                                    actions={
+                                        <ActionPanel>
+                                            <ActionPanel.Section>
+                                                <EditTaskAction onEdit={handleEdit} task={task} />
+                                                <CreateTaskAction onCreate={handleCreate} />
+                                                <DuplicateTaskAction onDupe={() => handleDuplicate(task.id)} />
+                                                <DeleteTaskAction onDelete={() => handleDelete(task.id)} />
+                                            </ActionPanel.Section>
+                                            <ActionPanel.Section>
+                                                <ExportFileAction onExport={handleExport} />
+                                            </ActionPanel.Section>
+                                            <ActionPanel.Section>
+                                                {googleClientId && (
+                                                    <ImportTasksAction onImport={handleImportFromGoogle} />
+                                                )}
+                                                {jiraToken && <ImportFromJiraAction onImport={handleImportFromJira} />}
+                                            </ActionPanel.Section>
+                                            <ActionPanel.Section>
+                                                <ToggleShowDetailsAction
+                                                    onAction={handleToggleShowDetails}
+                                                    isShowingDetail={state.isShowingDetail}
+                                                />
+                                            </ActionPanel.Section>
+                                        </ActionPanel>
+                                    }
+                                />
+                            );
+                        })}
+                    </List.Section>
+                );
+            })}
+        </List>
     );
 }
