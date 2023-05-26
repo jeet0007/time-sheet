@@ -305,18 +305,21 @@ export default function Command() {
                 });
                 return (
                     <List.Section
-                        key={groupIndex}
+                        key={group.date}
                         title={`${group.date} (${dateSuffix})`}
                         subtitle={`${pluralize(group.tasks.length, 'task')}, total ${pluralize(
                             group.totalManhours,
                             'hour'
                         )}`}
                     >
-                        {group.tasks.map((task, taskIndex) => {
+                        {group.tasks.map((task) => {
                             return (
                                 <List.Item
-                                    key={taskIndex}
-                                    icon={Icon.Dot}
+                                    key={task.id}
+                                    icon={{
+                                        source: Icon.Dot,
+                                        tintColor: group.totalManhours >= 8 ? Color.Green : Color.Orange,
+                                    }}
                                     title={task.task}
                                     detail={<TaskDetail task={task} />}
                                     accessories={[
