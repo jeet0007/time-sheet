@@ -57,22 +57,24 @@ export default function Command() {
 
     const groupedTasks = useMemo(
         () =>
-            tasks.reduce<TaskGroup[]>((acc, task) => {
-                const date = task.date;
-                const index = acc.findIndex((group) => group.date === date);
-                if (index === -1) {
-                    acc.push({
-                        date,
-                        tasks: [task],
-                        totalManhours: typeof task.manhours === 'string' ? parseInt(task.manhours) : task.manhours,
-                    });
-                } else {
-                    acc[index].tasks.push(task);
-                    acc[index].totalManhours +=
-                        typeof task.manhours === 'string' ? parseInt(task.manhours) : task.manhours;
-                }
-                return acc;
-            }, []),
+            tasks
+                .reduce<TaskGroup[]>((acc, task) => {
+                    const date = task.date;
+                    const index = acc.findIndex((group) => group.date === date);
+                    if (index === -1) {
+                        acc.push({
+                            date,
+                            tasks: [task],
+                            totalManhours: typeof task.manhours === 'string' ? parseInt(task.manhours) : task.manhours,
+                        });
+                    } else {
+                        acc[index].tasks.push(task);
+                        acc[index].totalManhours +=
+                            typeof task.manhours === 'string' ? parseInt(task.manhours) : task.manhours;
+                    }
+                    return acc;
+                }, [])
+                .sort((a, b) => (moment(a.date, 'DD-MM-YYYY').isSameOrBefore(moment(b.date, 'DD-MM-YYYY')) ? 1 : -1)),
         [tasks]
     );
 
