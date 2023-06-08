@@ -1,30 +1,30 @@
-import { ActionPanel, List } from '@raycast/api';
-import { Task } from '../type/Task';
-import { CreateTaskAction } from './CreateTaskAction';
-import { ImportTasksAction } from './ImportTasksAction';
-import { ImportFromJiraAction } from './ImportFromJiraAction';
-import { SettingAction } from './SettingAction';
+import { ActionPanel, List } from '@raycast/api'
+import { Task } from '../type/Task'
+import { CreateTaskAction } from './CreateTaskAction'
+import { ImportTasksAction } from './ImportTasksAction'
+import { ImportFromJiraAction } from './ImportFromJiraAction'
+import { SettingAction } from './SettingAction'
 
 export interface EmptyViewProps {
-    onCreate: (task: Task) => void;
-    onImport?: (date: Date) => void;
-    onImportFromJira?: (date: Date, project: string, status: string) => void;
+  onCreate: (task: Task) => void
+  onImport?: (date: Date) => void
+  onImportFromJira?: (date: Date, project: string, status: string) => void
 }
 
 export const EmptyView = ({ onCreate, onImport, onImportFromJira }: EmptyViewProps) => {
-    return (
-        <List.EmptyView
-            icon={'💀'}
-            title={'No Task Added'}
-            description={'Remember your bonus next year'}
-            actions={
-                <ActionPanel>
-                    <CreateTaskAction onCreate={onCreate} />
-                    {onImport && <ImportTasksAction onImport={onImport} />}
-                    {onImportFromJira && <ImportFromJiraAction onImport={onImportFromJira} />}
-                    <SettingAction />
-                </ActionPanel>
-            }
-        />
-    );
-};
+  return (
+    <List.EmptyView
+      icon={'💀'}
+      title={'No Task Added'}
+      description={'Remember your bonus next year'}
+      actions={
+        <ActionPanel>
+          <CreateTaskAction onCreate={onCreate} />
+          {onImport && <ImportTasksAction onImport={onImport} />}
+          {onImportFromJira && <ImportFromJiraAction onImport={onImportFromJira} />}
+          <SettingAction />
+        </ActionPanel>
+      }
+    />
+  )
+}
