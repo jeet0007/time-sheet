@@ -5,7 +5,8 @@
     "title": "Time sheet",
     "description": "Internal tool to Automate filling timesheet",
     "icon": "icon.png",
-    "author": "appman",
+    "author": "jeet0007",
+    "owner": "appman",
     "categories": [
         "Productivity"
     ],
