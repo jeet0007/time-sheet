@@ -224,7 +224,8 @@ export default function Command() {
             }
             const filename = `${getSaveDirectory()}/${moment().format('DD-MM-YYYY')}_tasks.${extension}`;
             writeFileSync(filename, data, 'utf-8');
-            setTasks([]);
+            // delete all tasks excepts ones with repeat set
+            setTasks((prev) => prev.filter((task) => task.repeat));
 
             showToast({
                 style: Toast.Style.Success,

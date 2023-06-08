@@ -70,6 +70,7 @@ export const EditTaskForm = ({ onEdit, task: initialValue }: EditTaskProps) => {
                 error={dateError}
                 onChange={debounce((newValue) => setTask({ ...task, date: newValue }), 1000)}
             />
+            <Form.Checkbox id="repeat" label="Repeat" defaultValue={task.repeat} />
         </Form>
     );
 };
