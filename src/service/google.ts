@@ -9,7 +9,7 @@ import { Task } from '../type/Task';
 // Create an OAuth client ID via https://console.developers.google.com/apis/credentials
 // As application type choose "iOS" (required for PKCE)
 // As Bundle ID enter: com.raycast
-const { googleClientId, googleEmail }: PreferencesType = getPreferenceValues();
+const { googleClientId, googleEmail, calendarFilters }: PreferencesType = getPreferenceValues<PreferencesType>();
 const clientId = googleClientId;
 
 const client = new OAuth.PKCEClient({
@@ -121,7 +121,7 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
             date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
         };
     });
-    // filter tasks
-    const filterCriteria = ['LUNCH', 'OUT OF OFFICE'];
+
+    const filterCriteria = calendarFilters.split(',').map((item) => item.trim().toUpperCase());
     return tasks.filter((item: Task) => !filterCriteria.includes(item.task.toUpperCase()));
 }

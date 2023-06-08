@@ -34,6 +34,7 @@ import { trimStringInObject } from './utils/object';
 import { ImportFromJiraAction } from './components/ImportFromJiraAction';
 import { parseJSON, pluralize } from './utils/string';
 import { TaskDetail } from './components/TaskDetail';
+import { SettingAction } from './components/SettingAction';
 
 export type State = {
     tasks: Task[];
@@ -319,6 +320,7 @@ export default function Command() {
                                                     onAction={handleToggleShowDetails}
                                                     isShowingDetail={isShowingDetail}
                                                 />
+                                                <SettingAction />
                                             </ActionPanel.Section>
                                         </ActionPanel>
                                     }

@@ -77,6 +77,14 @@
             "default": "json",
             "title": "File type for exported files",
             "description": "Used To Export Events to file (json, yaml)"
+        },
+        {
+            "name": "calendarFilters",
+            "type": "textfield",
+            "required": false,
+            "default": "LUNCH, OUT OF OFFICE",
+            "title": "Calendar Filters will ignore events from Calendar with these words in title",
+            "description": "Comma separated list of words"
         }
     ],
     "dependencies": {
