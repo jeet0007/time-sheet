@@ -7,4 +7,5 @@ export type PreferencesType = {
     jiraEmail?: string;
     jiraToken?: string;
     defaultProject?: string;
+    calendarFilters: string;
 };

@@ -9,4 +9,5 @@ export type Task = {
     crNo?: string;
     date: string;
     isEnhancement?: boolean;
+    repeat?: boolean;
 };

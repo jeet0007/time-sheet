@@ -34,6 +34,7 @@ import { trimStringInObject } from './utils/object';
 import { ImportFromJiraAction } from './components/ImportFromJiraAction';
 import { parseJSON, pluralize } from './utils/string';
 import { TaskDetail } from './components/TaskDetail';
+import { SettingAction } from './components/SettingAction';
 
 export type State = {
     tasks: Task[];
@@ -223,7 +224,8 @@ export default function Command() {
             }
             const filename = `${getSaveDirectory()}/${moment().format('DD-MM-YYYY')}_tasks.${extension}`;
             writeFileSync(filename, data, 'utf-8');
-            setTasks([]);
+            // delete all tasks excepts ones with repeat set
+            setTasks((prev) => prev.filter((task) => task.repeat));
 
             showToast({
                 style: Toast.Style.Success,
@@ -319,6 +321,7 @@ export default function Command() {
                                                     onAction={handleToggleShowDetails}
                                                     isShowingDetail={isShowingDetail}
                                                 />
+                                                <SettingAction />
                                             </ActionPanel.Section>
                                         </ActionPanel>
                                     }

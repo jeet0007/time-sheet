@@ -31,6 +31,7 @@ export const CreateTaskForm = (props: CreateTaskProps) => {
             <Form.TextField id="remark" title="Remark" />
             <Form.TextField id="crNo" title="Cr No" />
             <Form.TextField id="date" title="Date" defaultValue={moment().format('DD-MM-YYYY')} />
+            <Form.Checkbox id="repeat" label="Repeat" defaultValue={false} />
         </Form>
     );
 };
