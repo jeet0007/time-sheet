@@ -2,7 +2,7 @@ export type Task = {
     id: string;
     manhours: number;
     module?: string;
-    project: string;
+    project?: string;
     task: string;
     subTask?: string;
     remark?: string;

@@ -77,7 +77,7 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
 
 // API
 
-export async function fetchEvents(date: Date, defaultProject = '108') {
+export async function fetchEvents(date: Date) {
     if (!clientId || !googleEmail) return [];
     const params = new URLSearchParams();
     params.append('singleEvents', 'true');
@@ -116,7 +116,6 @@ export async function fetchEvents(date: Date, defaultProject = '108') {
             task: item.summary,
             module,
             manhours,
-            project: defaultProject,
             crNo: crNo && crNo[0] ? crNo[0] : '',
             date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
         };

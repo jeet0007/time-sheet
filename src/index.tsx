@@ -49,7 +49,7 @@ export function getSaveDirectory(): string {
 }
 
 export default function Command() {
-    const { exportType = 'json', googleClientId, jiraToken, defaultProject } = getPreferenceValues<PreferencesType>();
+    const { exportType = 'json', googleClientId, jiraToken } = getPreferenceValues<PreferencesType>();
     const { pop } = useNavigation();
 
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -100,7 +100,7 @@ export default function Command() {
         try {
             setIsLoading(true);
             await google.authorize();
-            const events = await google.fetchEvents(date, defaultProject);
+            const events = await google.fetchEvents(date);
             const newTasks = events.map((task) => {
                 const taskWithId = { ...task, id: randomUUID() };
                 return taskWithId;
@@ -185,7 +185,7 @@ export default function Command() {
     const handleImportFromJira = useCallback(async (date: Date, project: string, status: string) => {
         try {
             setIsLoading(true);
-            const newTasks = await jira.getTodaysTasks(date, project, status, defaultProject);
+            const newTasks = await jira.getTodaysTasks(date, project, status);
             setIsLoading(false);
             if (newTasks.length === 0) {
                 showToast({

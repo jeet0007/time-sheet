@@ -6,6 +6,5 @@ export type PreferencesType = {
     githubToken?: string;
     jiraEmail?: string;
     jiraToken?: string;
-    defaultProject?: string;
     calendarFilters: string;
 };

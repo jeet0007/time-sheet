@@ -29,14 +29,6 @@
             "description": "All Exports will be saved here"
         },
         {
-            "name": "defaultProject",
-            "type": "textfield",
-            "required": true,
-            "title": "Default Project",
-            "default": "108",
-            "description": "Default Project to be used for all events imported from other sources"
-        },
-        {
             "name": "googleClientId",
             "type": "textfield",
             "required": false,

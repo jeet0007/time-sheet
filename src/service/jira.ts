@@ -9,7 +9,7 @@ import { Task } from '../type/Task';
 const { jiraToken, jiraEmail }: PreferencesType = getPreferenceValues();
 const JIRA_URL = 'https://agentmate.atlassian.net';
 
-export async function getTodaysTasks(date: Date, project: string, status: string, defaultProject = '108') {
+export async function getTodaysTasks(date: Date, project: string, status: string) {
     if (!jiraToken || !jiraEmail) return [];
     // create an api request to get all tasks for today use basic auth
     const headers = new Headers();
@@ -46,7 +46,6 @@ export async function getTodaysTasks(date: Date, project: string, status: string
                 task: `[${name}] ${summary}`,
                 module: project.toLocaleUpperCase(),
                 manhours: 1,
-                project: defaultProject,
                 crNo: issue.key,
                 date: moment(date).format('DD-MM-YYYY'),
             };
