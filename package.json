@@ -22,7 +22,7 @@
     "preferences": [
         {
             "name": "saveDirectory",
-            "type": "textfield",
+            "type": "directory",
             "default": "~/Desktop",
             "required": true,
             "title": "Save Exports Directory",
