@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "@jeet0007/time-sheet",
+  "name": "time-sheet",
   "version": "2.0.4",
   "title": "Time sheet",
   "description": "Internal tool to Automate filling timesheet",
