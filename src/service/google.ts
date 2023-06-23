@@ -86,9 +86,6 @@ export async function fetchEvents(date: Date, endDate?: Date) {
   const formattedEndDate = endDate
     ? new Date(endDate.setUTCHours(23, 59, 59, 59))
     : new Date(date.setUTCHours(23, 59, 59, 59))
-
-  console.log('startDate', formattedStartDate)
-  console.log('endDateString', formattedEndDate)
   params.append('timeMin', formattedStartDate.toISOString())
   params.append('timeMax', formattedEndDate.toISOString())
   const response = await fetch(
