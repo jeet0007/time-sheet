@@ -95,11 +95,11 @@ export default function Command() {
     }
   }, [])
 
-  const handleImportFromGoogle = useCallback(async (date: Date) => {
+  const handleImportFromGoogle = useCallback(async (date: Date, endDate?: Date) => {
     try {
       setIsLoading(true)
       await google.authorize()
-      const events = await google.fetchEvents(date)
+      const events = await google.fetchEvents(date, endDate)
       const newTasks = events.map((task) => {
         const taskWithId = { ...task, id: randomUUID() }
         return taskWithId
