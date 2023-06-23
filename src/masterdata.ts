@@ -1,6 +1,6 @@
 export const projectOptions = [
-  { value: '107', title: '[APPMAN] RPA' },
   { value: '108', title: '[APPMAN] MAC' },
+  { value: '107', title: '[APPMAN] RPA' },
   { value: '123', title: '[Support] Support' },
   { value: '127', title: '[Squad] iPaaS' },
   { value: '132', title: 'MAC-KTAXA' },

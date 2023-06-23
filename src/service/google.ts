@@ -77,13 +77,17 @@ async function refreshTokens(refreshToken: string): Promise<OAuth.TokenResponse>
 
 // API
 
-export async function fetchEvents(date: Date) {
+export async function fetchEvents(date: Date, endDate?: Date) {
   if (!clientId || !googleEmail) return []
   const params = new URLSearchParams()
   params.append('singleEvents', 'true')
   params.append('orderBy', 'startTime')
-  params.append('timeMin', new Date(date.setUTCHours(0, 0, 0, 0)).toISOString())
-  params.append('timeMax', new Date(date.setUTCHours(23, 59, 59, 59)).toISOString())
+  const formattedStartDate = new Date(date.setUTCHours(0, 0, 0, 0))
+  const formattedEndDate = endDate
+    ? new Date(endDate.setUTCHours(23, 59, 59, 59))
+    : new Date(date.setUTCHours(23, 59, 59, 59))
+  params.append('timeMin', formattedStartDate.toISOString())
+  params.append('timeMax', formattedEndDate.toISOString())
   const response = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${googleEmail}/events?` + params.toString(),
     {
@@ -117,7 +121,7 @@ export async function fetchEvents(date: Date) {
       module,
       manhours,
       crNo: crNo && crNo[0] ? crNo[0] : '',
-      date: moment(new Date(item.start.dateTime)).format('DD-MM-YYYY'),
+      date: moment(startTime).format('DD-MM-YYYY'),
     }
   })
 
