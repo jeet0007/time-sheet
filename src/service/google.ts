@@ -1,10 +1,9 @@
 import { getPreferenceValues, OAuth } from '@raycast/api'
-import moment from 'moment'
 import fetch from 'node-fetch'
-import { randomUUID } from 'node:crypto'
 import { PreferencesType } from '../type/config'
 import { Event } from '../type/Event'
 import { Task } from '../type/Task'
+import { mergeDuplicateTasks, parseEvent } from '../utils/googleEvent'
 
 // Create an OAuth client ID via https://console.developers.google.com/apis/credentials
 // As application type choose "iOS" (required for PKCE)
@@ -108,23 +107,8 @@ export async function fetchEvents(date: Date, endDate?: Date) {
 
   const json = (await response.json()) as { items: Event[] }
   const { items } = json
-  const tasks: Task[] = items.map((item: Event) => {
-    const summary = item.summary
-    const crNo: RegExpMatchArray | null = summary.match(/([a-zA-Z1-9]{3,10})-(\d+)/gm)
-    const module = crNo && crNo[0] ? crNo[0].split('-')[0].toUpperCase() : 'Meeting'
-    const startTime = new Date(item.start.dateTime)
-    const endTime = new Date(item.end.dateTime)
-    const manhours = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60)
-    return {
-      id: randomUUID(),
-      task: item.summary,
-      module,
-      manhours,
-      crNo: crNo && crNo[0] ? crNo[0] : '',
-      date: moment(startTime).format('DD-MM-YYYY'),
-    }
-  })
-
+  let tasks: Task[] = items.map((item: Event) => parseEvent(item))
+  tasks = mergeDuplicateTasks(tasks)
   const filterCriteria = calendarFilters.split(',').map((item) => item.trim().toUpperCase())
   return tasks.filter((item: Task) => !filterCriteria.includes(item.task.toUpperCase()))
 }
