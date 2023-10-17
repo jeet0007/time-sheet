@@ -6,7 +6,11 @@ import { Task } from '../type/Task'
 export const mergeDuplicateTasks = (tasks: Task[]) => {
   const mergedTasks: Task[] = []
   tasks.forEach((task) => {
-    const index = mergedTasks.findIndex((item) => item.task === task.task && item.date === task.date)
+    const name = task.task.trim()
+    const date = new Date(task.date).toDateString()
+    const index = mergedTasks.findIndex(
+      (item) => item.task.trim() === name && new Date(item.date).toDateString() === date
+    )
     if (index > -1) {
       mergedTasks[index].manhours += task.manhours
     } else {
