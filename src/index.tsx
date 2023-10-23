@@ -125,7 +125,6 @@ export default function Command() {
     try {
       trimStringInObject(task)
       setTasks((previous) => [...previous, { ...task, id: randomUUID() }])
-      pop()
       showToast({
         style: Toast.Style.Success,
         title: 'Yay!',
@@ -149,7 +148,6 @@ export default function Command() {
         newTasks[index] = { ...values }
         return newTasks
       })
-      pop()
       showToast({
         style: Toast.Style.Success,
         title: 'Yay!',

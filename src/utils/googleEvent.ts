@@ -2,6 +2,7 @@ import { Event } from '../type/Event'
 import { randomUUID } from 'node:crypto'
 import moment from 'moment'
 import { Task } from '../type/Task'
+import { holidays } from '../configs'
 
 export const mergeDuplicateTasks = (tasks: Task[]) => {
   const mergedTasks: Task[] = []
@@ -45,7 +46,22 @@ export const parseEvent = (item: Event) => {
   }
 }
 
+const isSameDate = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  )
+}
 
+export const googleEventFilter = (item: Event) => {
+  // filter out weekends and holidays
+  const date = moment(item.start.dateTime)
+  const day = date.day()
+  const isWeekend = day === 0 || day === 6
+  const isHoliday = holidays.find((holiday) => isSameDate(date.toDate(), new Date(holiday.date)))
+  return !isWeekend && !isHoliday
+}
 
 
 

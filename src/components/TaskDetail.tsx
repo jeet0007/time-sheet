@@ -1,6 +1,6 @@
 import { Icon, List } from '@raycast/api'
 import { Task } from '../type/Task'
-import { projectOptions } from '../masterdata'
+import { projectOptions } from '../configs/masterdata'
 
 export const TaskDetail = ({ task }: { task: Task }) => {
   return (

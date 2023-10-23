@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { PreferencesType } from '../type/config'
 import { Event } from '../type/Event'
 import { Task } from '../type/Task'
-import { mergeDuplicateTasks, parseEvent } from '../utils/googleEvent'
+import { googleEventFilter, mergeDuplicateTasks, parseEvent } from '../utils/googleEvent'
 
 // Create an OAuth client ID via https://console.developers.google.com/apis/credentials
 // As application type choose "iOS" (required for PKCE)
@@ -107,7 +107,7 @@ export async function fetchEvents(date: Date, endDate?: Date) {
 
   const json = (await response.json()) as { items: Event[] }
   const { items } = json
-  let tasks: Task[] = items.map((item: Event) => parseEvent(item))
+  let tasks: Task[] = items.filter(googleEventFilter).map((item: Event) => parseEvent(item))
   tasks = mergeDuplicateTasks(tasks)
   const filterCriteria = calendarFilters.split(',').map((item) => item.trim().toUpperCase())
   return tasks.filter((item: Task) => !filterCriteria.includes(item.task.toUpperCase()))

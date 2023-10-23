@@ -1,6 +1,6 @@
 import { Action, Icon } from '@raycast/api'
 import { Task } from '../type/Task'
-import { CreateTaskForm } from './CreateTaskForm'
+import { TaskForm } from './TaskForm'
 
 interface CreateTaskProps {
   onCreate: (task: Task) => void
@@ -12,7 +12,7 @@ export const CreateTaskAction = (props: CreateTaskProps) => {
       icon={Icon.Plus}
       title="Create New Task"
       shortcut={{ modifiers: ['cmd'], key: 'n' }}
-      target={<CreateTaskForm onCreate={props.onCreate} />}
+      target={<TaskForm onCreate={props.onCreate} />}
     />
   )
 }

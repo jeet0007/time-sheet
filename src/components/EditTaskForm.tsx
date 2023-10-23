@@ -3,7 +3,8 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { Task } from '../type/Task'
 import { debounce } from 'lodash'
-import { projectOptions } from '../masterdata'
+import { projectOptions } from '../configs'
+
 export interface EditTaskProps {
   task: Task
   onEdit: (values: Task) => void

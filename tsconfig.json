@@ -1,3 +1,4 @@
+// Docs: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 16",
