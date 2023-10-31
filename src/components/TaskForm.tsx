@@ -21,6 +21,7 @@ const removeActionFromKeys = (values: Record<string, any>, action: string): void
 export const TaskForm = (props: TaskFormProps) => {
   const { pop } = useNavigation()
   const task: Task | undefined = props.task
+  // This is to make sure the action is unique and so that the form can be reused
   const action = task?.id ? task.id : ''
   const handleSubmit = (values: Task) => {
     console.log(values)
@@ -54,7 +55,7 @@ export const TaskForm = (props: TaskFormProps) => {
         id={`date-${action}`}
         placeholder="DD/MM/YYYY"
         title="Date"
-        defaultValue={task?.date || moment().format('DD/MM/YYYY')}
+        defaultValue={task?.date || moment().format('DD-MM-YYYY')}
       />
       <Form.TextField
         id={`manhours-${action}`}
