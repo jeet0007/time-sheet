@@ -4,32 +4,23 @@ import moment from 'moment'
 import { Task } from '../type/Task'
 import { holidays } from '../configs'
 
-const areDatesEqual = (dateStr1: string, dateStr2: string): boolean => {
-  const date1 = new Date(dateStr1);
-  const date2 = new Date(dateStr2);
-  // Compare dates without considering time
-  return date1.toISOString().split('T')[0] === date2.toISOString().split('T')[0];
-};
 
 
-export const mergeDuplicateTasks = (tasks: Task[]): Task[] => {
-  const mergedTasks: Task[] = [];
-
+export const mergeDuplicateTasks = (tasks: Task[]) => {
+  const mergedTasks: Task[] = []
   tasks.forEach((task) => {
-    const existingTask = mergedTasks.find(
-      (t) =>
-        t.task.trim() === task.task.trim() &&
-        areDatesEqual(t.date, task.date)
-    );
-    if (existingTask) {
-      existingTask.manhours += task.manhours || 0;
+    const name = task.task.trim()
+    const index = mergedTasks.findIndex(
+      (item) => item.task.trim() === name && item.date === task.date)
+    if (index > -1) {
+      mergedTasks[index].manhours += task.manhours
     } else {
-      mergedTasks.push({ ...task });
+      mergedTasks.push(task)
     }
-  });
+  })
+  return mergedTasks
+}
 
-  return mergedTasks;
-};
 
 export const parseEvent = (item: Event) => {
   const summary = item.summary
