@@ -6,7 +6,6 @@ export const projectOptions = [
   { value: '122', title: '[APPMAN] The world eats ML' },
   { value: '235', title: '[Chubb] ILP' },
   { value: '102', title: 'Infra Team' },
-  { value: '49', title: 'Internal' },
   { value: '50', title: 'ISO 27001' },
   { value: '132', title: 'MAC-KTAXA' },
   { value: '51', title: '[KTAXA] Advisor Zone' },

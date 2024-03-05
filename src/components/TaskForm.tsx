@@ -2,6 +2,7 @@ import { Action, ActionPanel, Form, useNavigation } from '@raycast/api'
 import moment from 'moment'
 import { Task } from '../type/Task'
 import { projectOptions } from '../configs/masterdata'
+import { useState } from 'react'
 
 export interface TaskFormProps {
   task?: Task
@@ -19,8 +20,11 @@ const removeActionFromKeys = (values: Record<string, any>, action: string): void
 }
 
 export const TaskForm = (props: TaskFormProps) => {
+  const { task } = props
   const { pop } = useNavigation()
-  const task: Task | undefined = props.task
+
+  const [isEnhancement, setIsEnhancement] = useState(task?.isEnhancement ?? false)
+
   // This is to make sure the action is unique and so that the form can be reused
   const action = task?.id ? task.id : ''
   const handleSubmit = (values: Task) => {
@@ -63,6 +67,27 @@ export const TaskForm = (props: TaskFormProps) => {
         placeholder="1"
         defaultValue={`${task?.manhours || 1}`}
       />
+      <Form.Checkbox
+        id={`isEnhancement-${action}`}
+        label="Is Enhancement"
+        value={isEnhancement}
+        onChange={setIsEnhancement}
+      />
+      {isEnhancement ? (
+        <Form.TextField
+          id={`chargeCode-${action}`}
+          title="Charge Code"
+          placeholder="Charge Code"
+          storeValue
+          defaultValue={`${task?.chargeCode || ''}`}
+        />
+      ) : (
+        <Form.Dropdown id={`project-${action}`} title="Project" defaultValue={task?.project} storeValue>
+          {projectOptions.map((item) => (
+            <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
+          ))}
+        </Form.Dropdown>
+      )}
       <Form.TextField
         id={`module-${action}`}
         title="Module"
@@ -70,12 +95,6 @@ export const TaskForm = (props: TaskFormProps) => {
         storeValue
         defaultValue={`${task?.module || ''}`}
       />
-      <Form.Dropdown id={`project-${action}`} title="Project" defaultValue={task?.project} storeValue>
-        {projectOptions.map((item) => (
-          <Form.Dropdown.Item key={item.value} value={item.value} title={item.title} />
-        ))}
-      </Form.Dropdown>
-      <Form.Checkbox id={`isEnhancement-${action}`} label="Is Enhancement" defaultValue={task?.isEnhancement} />
       <Form.TextField
         id={`subTaskInput-${action}`}
         placeholder="subtask"
