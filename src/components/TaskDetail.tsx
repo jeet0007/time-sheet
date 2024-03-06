@@ -11,11 +11,15 @@ export const TaskDetail = ({ task }: { task: Task }) => {
           <List.Item.Detail.Metadata.Label title="Task" text={task.task} />
           <List.Item.Detail.Metadata.Label title="Man hours" text={`${task.manhours}`} icon={Icon.Stopwatch} />
           <List.Item.Detail.Metadata.Label title="Module" text={task.module} />
-          <List.Item.Detail.Metadata.Label
-            title="Project"
-            text={projectOptions.find((item) => item.value === task.project)?.title || task.project}
-          />
           <List.Item.Detail.Metadata.Label title="Is Enhancement" text={task.isEnhancement ? 'Yes' : 'No'} />
+          {task.isEnhancement ? (
+            <List.Item.Detail.Metadata.Label title="Charge Code" text={task.chargeCode} />
+          ) : (
+            <List.Item.Detail.Metadata.Label
+              title="Project"
+              text={projectOptions.find((item) => item.value === task.project)?.title || task.project}
+            />
+          )}
           <List.Item.Detail.Metadata.Label title="Sub task" text={task.subTask} />
           <List.Item.Detail.Metadata.Label title="Remark" text={task.remark} />
           <List.Item.Detail.Metadata.Label title="Cr No" text={task.crNo} />

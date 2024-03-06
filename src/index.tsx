@@ -290,6 +290,7 @@ export default function Command() {
                   title={task.task}
                   detail={<TaskDetail task={task} />}
                   accessories={[
+                    task.isEnhancement && task.chargeCode ? { text: task.chargeCode, icon: Icon.LightBulb } : {},
                     task.crNo ? { text: task.crNo, icon: Icon.Document } : {},
                     { text: { value: `${task.manhours}` }, icon: Icon.Stopwatch },
                   ]}

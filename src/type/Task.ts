@@ -9,5 +9,6 @@ export type Task = {
   crNo?: string
   date: string
   isEnhancement?: boolean
+  chargeCode?: string
   repeat?: boolean
 }
